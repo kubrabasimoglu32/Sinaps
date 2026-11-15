@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Geçici ana sayfa
 app.get("/", (req, res) => {
-    res.render("index", { title: "NotKutusu" });
+    res.render("index", { title: "Ana Sayfa" });
 });
 
 app.listen(3000, () => {

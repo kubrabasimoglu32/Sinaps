@@ -1,0 +1,70 @@
+/* ===== RENKLER =====
+   Renkleri bir kez burada tanımlıyoruz, her yerde bu isimlerle kullanıyoruz.
+   Bir rengi değiştirmek istersen sadece buradan değiştirmen yeterli. */
+:root {
+    --lacivert: #042C53;      /* navbar ve footer */
+    --mavi: #185FA5;          /* karşılama alanı, kart şeritleri */
+    --acik-mavi: #E6F1FB;     /* kart kenarları, etiketler */
+    --zemin: #F2F7FC;         /* sayfa arka planı */
+    --turuncu: #EF9F27;       /* önemli butonlar (Kayıt ol, İndir) */
+    --koyu-turuncu: #412402;  /* turuncu buton üstündeki yazı */
+    --gri-yazi: #5F5E5A;      /* ikincil yazılar */
+}
+
+/* ===== GENEL ===== */
+body {
+    font-family: "Inter", sans-serif;
+    background-color: var(--zemin);
+    /* footer'ın her zaman sayfanın en altında durması için: */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+main { flex: 1; }
+
+h1, h2, h3, h4, h5, h6 { color: var(--lacivert); }
+
+/* ===== NAVBAR ===== */
+.sinaps-navbar { background-color: var(--lacivert); }
+.sinaps-navbar .nav-link { color: #B5D4F4; }
+.sinaps-navbar .nav-link:hover { color: #ffffff; }
+
+/* ===== BUTONLAR ===== */
+.btn { border-radius: 6px; }
+
+.btn-turuncu {
+    background-color: var(--turuncu);
+    color: var(--koyu-turuncu);
+    border: none;
+}
+.btn-turuncu:hover {
+    background-color: #BA7517;
+    color: #ffffff;
+}
+
+/* ===== KARTLAR (B tarzı: üstte mavi şerit) ===== */
+.sinaps-kart {
+    background: #ffffff;
+    border: 1px solid var(--acik-mavi);
+    border-top: 3px solid var(--mavi);
+    border-radius: 0;
+    padding: 16px;
+    transition: transform 0.2s;
+}
+.sinaps-kart:hover { transform: translateY(-3px); }
+
+/* ===== FOOTER ===== */
+.sinaps-footer {
+    background-color: var(--lacivert);
+    color: #B5D4F4;
+}
+.sinaps-footer a {
+    color: #B5D4F4;
+    text-decoration: none;
+}
+.sinaps-footer a:hover { color: #ffffff; }
+/* ===== LOGO ===== */
+.sinaps-logo {
+    height: 28px;
+    width: auto;
+}

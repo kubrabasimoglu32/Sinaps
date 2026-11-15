@@ -1,0 +1,31 @@
+<nav class="navbar navbar-expand-lg navbar-dark sinaps-navbar sticky-top">
+    <div class="container">
+
+        <!-- Logo -->
+        <a class="navbar-brand fw-semibold d-flex align-items-center gap-2" href="/">
+            <%- include("logo") %> Sinaps
+        </a>  
+
+        <!-- Mobilde görünen ☰ butonu -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Menü linkleri -->
+        <div class="collapse navbar-collapse" id="menu">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item"><a class="nav-link" href="/bolumler">Bölümler</a></li>
+                <li class="nav-item"><a class="nav-link" href="/duyurular">Duyurular</a></li>
+                <li class="nav-item"><a class="nav-link" href="/sorular">Soru-Cevap</a></li>
+                <li class="nav-item"><a class="nav-link" href="/galeri">Galeri</a></li>
+            </ul>
+
+            <!-- Sağ taraftaki butonlar -->
+            <div class="d-flex gap-2">
+                <a href="/giris" class="btn btn-outline-light btn-sm">Giriş</a>
+                <a href="/kayit" class="btn btn-turuncu btn-sm">Kayıt ol</a>
+            </div>
+        </div>
+
+    </div>
+</nav>
