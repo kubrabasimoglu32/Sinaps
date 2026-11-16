@@ -3,20 +3,23 @@ const path = require("path");
 
 const app = express();
 
-// Görünüm motoru
+// ===== AYARLAR =====
 app.set("view engine", "ejs");
 
-// Statik dosyalar (css, resimler)
+// ===== MIDDLEWARE =====
 app.use("/static", express.static(path.join(__dirname, "public")));
-
-// Formdan gelen verileri okumak için
 app.use(express.urlencoded({ extended: true }));
 
-// Geçici ana sayfa
-app.get("/", (req, res) => {
-    res.render("index", { title: "Ana Sayfa" });
+// ===== ROUTES =====
+const siteRouter = require("./routes/site");
+app.use("/", siteRouter);
+
+// ===== 404: Yukarıdaki hiçbir adrese uymayan istekler buraya düşer =====
+app.use((req, res) => {
+    res.status(404).render("404", { title: "Sayfa bulunamadı" });
 });
 
+// ===== SUNUCU =====
 app.listen(3000, () => {
     console.log("🚀 Sunucu çalışıyor: http://localhost:3000");
 });

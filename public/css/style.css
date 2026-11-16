@@ -68,3 +68,42 @@ h1, h2, h3, h4, h5, h6 { color: var(--lacivert); }
     height: 28px;
     width: auto;
 }
+/* ===== KARŞILAMA ALANI ===== */
+.hero {
+    background-color: var(--mavi);
+    color: #ffffff;
+    padding: 64px 0;
+}
+.hero h1 { color: #ffffff; }
+.hero p { color: var(--acik-mavi); }
+
+.arama-kutusu {
+    max-width: 520px;
+    margin: 28px auto 0;
+}
+
+/* ===== NASIL ÇALIŞIR ===== */
+.adim-ikon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+    font-size: 22px;
+    background-color: var(--acik-mavi);
+    color: var(--mavi);
+}
+.adim-ikon.turuncu {
+    background-color: #FAEEDA;
+    color: #854F0B;
+}
+
+/* ===== KÜÇÜK YARDIMCILAR ===== */
+.sinaps-kart.turuncu-serit { border-top-color: var(--turuncu); }
+.ders-etiketi { color: var(--mavi); font-size: 0.85rem; }
+.soluk { color: var(--gri-yazi); font-size: 0.875rem; }
+.puan { color: #854F0B; font-weight: 500; }
+.sinaps-kart a { color: var(--lacivert); text-decoration: none; }
+.sinaps-kart a:hover { color: var(--mavi); }

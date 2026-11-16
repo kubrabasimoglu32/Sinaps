@@ -1,16 +1,124 @@
 <%- include("partials/head") %>
 <%- include("partials/navbar") %>
 
-<main class="container py-5">
-    <h1>İskelet hazır!</h1>
-    <p>Navbar üstte, footer altta. Bir sonraki adımda burayı dolduracağız.</p>
+<main>
 
-    <div class="sinaps-kart mt-4" style="max-width: 320px;">
-        <small style="color: var(--mavi);">Veri Yapıları</small>
-        <h6 class="mb-1">Vize özeti</h6>
-        <small style="color: var(--gri-yazi);">kubra · 42 indirme</small>
-        <div class="mt-2">
-            <a href="#" class="btn btn-turuncu btn-sm"><i class="bi bi-download"></i> İndir</a>
+    <!-- ===== 1. KARŞILAMA ALANI ===== -->
+    <section class="hero text-center">
+        <div class="container">
+            <h1 class="fw-semibold">Bilgi paylaştıkça güçlenir</h1>
+            <p class="lead mb-4">Notunu paylaş, puan kazan, ihtiyacın olan notlara ulaş.</p>
+
+            <a href="/bolumler" class="btn btn-turuncu px-4">Notlara göz at</a>
+            <a href="/kayit" class="btn btn-outline-light px-4">Aramıza katıl</a>
+
+            <!-- Arama çubuğu -->
+            <form action="/ara" method="GET" class="arama-kutusu">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-0"><i class="bi bi-search"></i></span>
+                    <input type="text" name="q" class="form-control border-0" placeholder="Ders veya not ara...">
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- ===== 2. NASIL ÇALIŞIR ===== -->
+    <section class="bg-white py-5">
+        <div class="container text-center">
+            <h4 class="mb-4">Nasıl çalışır?</h4>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="adim-ikon"><i class="bi bi-upload"></i></div>
+                    <h6 class="mb-1">1. Paylaş</h6>
+                    <p class="soluk mb-0">Ders notunu yükle</p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="adim-ikon turuncu"><i class="bi bi-star"></i></div>
+                    <h6 class="mb-1">2. Puan kazan</h6>
+                    <p class="soluk mb-0">Onaylanınca puan ve rozet</p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="adim-ikon"><i class="bi bi-download"></i></div>
+                    <h6 class="mb-1">3. İndir</h6>
+                    <p class="soluk mb-0">Katkın arttıkça hakkın artar</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container py-5">
+
+        <!-- ===== 3. BÖLÜMLER ===== -->
+        <h4 class="mb-3">Bölümler</h4>
+        <div class="row g-3 mb-5">
+            <% bolumler.forEach(bolum => { %>
+                <div class="col-md-6">
+                    <div class="sinaps-kart">
+                        <h6 class="mb-1"><a href="/bolum/<%= bolum.slug %>"><%= bolum.ad %></a></h6>
+                        <span class="soluk"><%= bolum.dersSayisi %> ders · <%= bolum.notSayisi %> not</span>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- ===== 4. SON PAYLAŞILAN NOTLAR (sol, geniş) ===== -->
+            <div class="col-lg-8">
+                <h4 class="mb-3">Son paylaşılan notlar</h4>
+                <% notlar.forEach(not => { %>
+                    <div class="sinaps-kart mb-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="ders-etiketi"><%= not.ders.ad %></div>
+                            <h6 class="mb-1"><a href="/not/<%= not.slug %>"><%= not.baslik %></a></h6>
+                            <span class="soluk"><%= not.yukleyen %> · <%= not.indirme %> indirme</span>
+                        </div>
+                        <a href="/not/<%= not.slug %>" class="btn btn-turuncu btn-sm">İndir</a>
+                    </div>
+                <% }) %>
+            </div>
+
+            <!-- ===== 5. BU AYIN LİDERLERİ (sağ, dar) ===== -->
+            <div class="col-lg-4">
+                <h4 class="mb-3">Bu ayın liderleri</h4>
+                <div class="sinaps-kart turuncu-serit">
+                    <% liderler.forEach((kisi, sira) => { %>
+                        <div class="d-flex justify-content-between py-1 <%= sira >= 3 ? 'soluk' : '' %>">
+                            <span><%= sira + 1 %>. <%= kisi.ad %></span>
+                            <span class="<%= sira < 3 ? 'puan' : '' %>"><%= kisi.puan %> p</span>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row g-4 mt-2">
+
+            <!-- ===== 6. DUYURULAR ===== -->
+            <div class="col-md-6">
+                <h4 class="mb-3">Duyurular</h4>
+                <% duyurular.forEach(duyuru => { %>
+                    <div class="sinaps-kart mb-3">
+                        <h6 class="mb-1"><a href="/duyuru/<%= duyuru.slug %>"><%= duyuru.baslik %></a></h6>
+                        <span class="soluk">
+                            <%= new Date(duyuru.tarih).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" }) %>
+                        </span>
+                    </div>
+                <% }) %>
+            </div>
+
+            <!-- ===== 7. SON SORULAR ===== -->
+            <div class="col-md-6">
+                <h4 class="mb-3">Son sorular</h4>
+                <% sorular.forEach(soru => { %>
+                    <div class="sinaps-kart mb-3">
+                        <h6 class="mb-1"><a href="/soru/<%= soru.slug %>"><%= soru.baslik %></a></h6>
+                        <span class="soluk"><%= soru.ders.ad %> · <%= soru.cevapSayisi %> cevap</span>
+                    </div>
+                <% }) %>
+            </div>
+
         </div>
     </div>
 </main>
