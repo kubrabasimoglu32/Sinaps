@@ -58,7 +58,9 @@ exports.girisYap = async (req, res) => {
     }
 
     req.session.kullanici = { id: kisi.id, ad: kisi.ad, rol: kisi.rol };
-    res.redirect("/");
+    const donus = req.session.donus || "/";
+    delete req.session.donus;
+    res.redirect(donus);
 };
 
 // ===== ÇIKIŞ =====

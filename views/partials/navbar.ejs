@@ -24,6 +24,9 @@
             <div class="d-flex gap-2 align-items-center">
                <% if (kullanici) { %>
                     <!-- Giriş yapılmışsa -->
+                     <% if (kullanici.rol === "admin" || kullanici.rol === "moderator") { %>
+                     <a href="/admin" class="btn btn-sm btn-light"><i class="bi bi-speedometer2"></i> Panel</a>
+                     <% } %>
                     <span class="text-white small me-2">
                     <i class="bi bi-person-circle"></i> <%= kullanici.ad %>
                     </span>

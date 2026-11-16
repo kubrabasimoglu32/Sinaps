@@ -23,10 +23,13 @@ app.use(require("./middleware/locals"));
 
 // ===== ROUTES =====
 // ===== ROUTES =====
+
 const siteRouter = require("./routes/site");
 const authRouter = require("./routes/auth");
+const adminRouter = require("./routes/admin");
 app.use("/", siteRouter);
 app.use("/", authRouter);
+app.use("/admin", adminRouter);
 
 // ===== 404: Yukarıdaki hiçbir adrese uymayan istekler buraya düşer =====
 app.use((req, res) => {
