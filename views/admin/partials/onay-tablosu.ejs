@@ -1,0 +1,39 @@
+<% if (bekleyenler.length === 0) { %>
+    <div class="bos-durum">
+        <i class="bi bi-check2-circle fs-3" style="color: var(--mavi);"></i>
+        <p class="soluk mb-0 mt-2">Onay bekleyen not yok.</p>
+    </div>
+<% } else { %>
+    <div class="sinaps-kart p-0">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Not</th>
+                    <th>Ders</th>
+                    <th>Yükleyen</th>
+                    <th class="text-end">İşlem</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% bekleyenler.forEach(n => { %>
+                    <tr>
+                        <td>
+                            <%= n.baslik %>
+                            <div class="soluk"><%= n.tur %> · <%= n.sayfaSayisi %> sayfa</div>
+                        </td>
+                        <td><%= n.ders.ad %></td>
+                        <td><%= n.yukleyen %></td>
+                        <td class="text-end text-nowrap">
+                            <form action="/admin/notlar/<%= n.id %>/onayla" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-success">Onayla</button>
+                            </form>
+                            <form action="/admin/notlar/<%= n.id %>/reddet" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Reddet</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+<% } %>

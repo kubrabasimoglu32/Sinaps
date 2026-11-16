@@ -193,3 +193,78 @@ h1, h2, h3, h4, h5, h6 { color: var(--lacivert); }
     font-weight: 600;
     text-transform: uppercase;
 }
+/* ===== ADMİN DÜZENİ ===== */
+.admin-duzen {
+    display: flex;
+    flex: 1;
+    min-height: 100vh;
+}
+
+/* Sol menü */
+.admin-menu {
+    width: 240px;
+    flex-shrink: 0;
+    background-color: var(--lacivert);
+    padding: 20px 0;
+}
+.admin-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ffffff;
+    font-weight: 600;
+    padding: 0 20px 20px;
+    text-decoration: none;
+}
+.admin-logo:hover { color: #ffffff; }
+
+.menu-ogesi {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    color: #B5D4F4;
+    text-decoration: none;
+}
+.menu-ogesi:hover { background-color: #0C447C; color: #ffffff; }
+.menu-ogesi.aktif { background-color: var(--mavi); color: #ffffff; }
+
+.menu-ayrac {
+    font-size: 0.7rem;
+    color: #85B7EB;
+    letter-spacing: 0.5px;
+    padding: 18px 20px 6px;
+}
+.menu-sayac {
+    margin-left: auto;
+    background-color: var(--turuncu);
+    color: var(--koyu-turuncu);
+    border-radius: 10px;
+    padding: 0 8px;
+    font-size: 0.75rem;
+}
+
+/* Sağ içerik alanı */
+.admin-icerik {
+    flex: 1;
+    min-width: 0;
+    padding: 28px;
+}
+
+/* İstatistik kartları */
+.stat-kart .stat-sayi {
+    display: block;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--lacivert);
+}
+
+/* Basit çubuk grafik */
+.grafik {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 140px;
+}
+.grafik-cubuk { flex: 1; background-color: #B5D4F4; }
+.grafik-cubuk.bugun { background-color: var(--mavi); }

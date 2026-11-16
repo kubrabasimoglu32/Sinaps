@@ -1,0 +1,35 @@
+<aside class="admin-menu">
+    <a href="/admin" class="admin-logo"><%- include("../../partials/logo") %> Sinaps panel</a>
+
+    <!-- Admin ve moderatör -->
+    <a href="/admin" class="menu-ogesi <%= aktif === 'genel' ? 'aktif' : '' %>">
+        <i class="bi bi-speedometer2"></i> Genel bakış
+    </a>
+    <a href="/admin/notlar" class="menu-ogesi <%= aktif === 'notlar' ? 'aktif' : '' %>">
+        <i class="bi bi-file-earmark-check"></i> Not onayları
+        <% if (bekleyenSayisi > 0) { %><span class="menu-sayac"><%= bekleyenSayisi %></span><% } %>
+    </a>
+    <a href="/admin/sorular" class="menu-ogesi <%= aktif === 'sorular' ? 'aktif' : '' %>">
+        <i class="bi bi-chat-dots"></i> Sorular
+    </a>
+
+    <!-- Sadece admin -->
+    <% if (kullanici.rol === "admin") { %>
+        <div class="menu-ayrac">SADECE ADMİN</div>
+        <a href="/admin/duyurular" class="menu-ogesi <%= aktif === 'duyurular' ? 'aktif' : '' %>">
+            <i class="bi bi-megaphone"></i> Duyurular
+        </a>
+        <a href="/admin/galeri" class="menu-ogesi <%= aktif === 'galeri' ? 'aktif' : '' %>">
+            <i class="bi bi-images"></i> Galeri
+        </a>
+        <a href="/admin/dersler" class="menu-ogesi <%= aktif === 'dersler' ? 'aktif' : '' %>">
+            <i class="bi bi-mortarboard"></i> Bölüm ve dersler
+        </a>
+        <a href="/admin/kullanicilar" class="menu-ogesi <%= aktif === 'kullanicilar' ? 'aktif' : '' %>">
+            <i class="bi bi-people"></i> Kullanıcılar
+        </a>
+    <% } %>
+
+    <hr class="border-secondary mx-3">
+    <a href="/" class="menu-ogesi"><i class="bi bi-arrow-left"></i> Siteye dön</a>
+</aside>

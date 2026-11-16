@@ -1,10 +1,68 @@
 <%- include("../partials/head") %>
-<%- include("../partials/navbar") %>
 
-<main class="container py-5">
-    <h2>Admin paneli</h2>
-    <p>Hoş geldin <strong><%= kullanici.ad %></strong>. Rolün: <span class="etiket"><%= kullanici.rol %></span></p>
-    <p class="soluk">Bu sayfa geçici. Asıl panel bir sonraki adımda gelecek.</p>
-</main>
+<div class="admin-duzen">
+    <%- include("partials/menu") %>
 
-<%- include("../partials/footer") %>
+    <main class="admin-icerik">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="mb-0">Genel bakış</h3>
+            <span class="soluk"><%= kullanici.ad %> · <%= kullanici.rol %></span>
+        </div>
+
+        <!-- İstatistik kartları -->
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-lg-3">
+                <div class="sinaps-kart stat-kart">
+                    <span class="soluk">Bugün ziyaret</span>
+                    <span class="stat-sayi"><%= istatistik.bugun %></span>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="sinaps-kart stat-kart">
+                    <span class="soluk">Toplam ziyaret</span>
+                    <span class="stat-sayi"><%= istatistik.toplam.toLocaleString("tr-TR") %></span>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="sinaps-kart stat-kart">
+                    <span class="soluk">Çevrimiçi</span>
+                    <span class="stat-sayi"><%= istatistik.cevrimici %></span>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="sinaps-kart stat-kart turuncu-serit">
+                    <span class="soluk">Onay bekleyen</span>
+                    <span class="stat-sayi" style="color: #854F0B;"><%= bekleyenSayisi %></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Onay bekleyen notlar -->
+            <div class="col-lg-7">
+                <h5 class="mb-3">Onay bekleyen notlar</h5>
+                <%- include("partials/onay-tablosu") %>
+            </div>
+
+            <!-- Son 7 gün grafiği -->
+            <div class="col-lg-5">
+                <h5 class="mb-3">Son 7 gün ziyaret</h5>
+                <div class="sinaps-kart">
+                    <% const enYuksek = Math.max(...istatistik.son7gun); %>
+                    <div class="grafik">
+                        <% istatistik.son7gun.forEach((sayi, i) => { %>
+                            <div class="grafik-cubuk <%= i === 6 ? 'bugun' : '' %>"
+                                 style="height: <%= Math.round(sayi / enYuksek * 100) %>%;"
+                                 title="<%= sayi %> ziyaret"></div>
+                        <% }) %>
+                    </div>
+                    <p class="soluk text-center mt-2 mb-0">Koyu çubuk: bugün</p>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -33,6 +33,22 @@ const notlar = [
         tur: "Özet", dosyaTuru: "PDF", sayfaSayisi: 4, tarih: "2026-11-12",
         aciklama: "Express'te router yapısı, middleware ve route parametreleri."
     }
+    
+];
+    // Yüklenmiş ama henüz moderatör onayı almamış notlar
+const bekleyenNotlar = [
+    {
+        id: 4, dersId: 1, baslik: "Yığıt ve Kuyruk Özeti", slug: "yigit-ve-kuyruk-ozeti",
+        yukleyen: "can", indirme: 0, begeni: 0,
+        tur: "Özet", dosyaTuru: "PDF", sayfaSayisi: 5, tarih: "2026-11-16",
+        aciklama: "Yığıt ve kuyruk yapılarının özeti, örnek sorularla."
+    },
+    {
+        id: 5, dersId: 3, baslik: "Siber Güvenlik Vize Notları", slug: "siber-guvenlik-vize-notlari",
+        yukleyen: "elif", indirme: 0, begeni: 0,
+        tur: "Ders notu", dosyaTuru: "PDF", sayfaSayisi: 10, tarih: "2026-11-16",
+        aciklama: "Temel kavramlar, saldırı türleri ve şifreleme."
+    }
 ];
 
 const duyurular = [
@@ -53,4 +69,4 @@ const sorular = [
     { id: 2, dersId: 2, baslik: "Express'te middleware ne işe yarar?", slug: "expresste-middleware-ne-ise-yarar", soran: "elif", cevapSayisi: 1 }
 ];
 
-module.exports = { bolumler, dersler, notlar, duyurular, kullanicilar, sorular };
+module.exports = { bolumler, dersler, notlar,bekleyenNotlar, duyurular, kullanicilar, sorular };
