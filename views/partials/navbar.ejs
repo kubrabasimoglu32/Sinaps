@@ -21,9 +21,20 @@
             </ul>
 
             <!-- Sağ taraftaki butonlar -->
-            <div class="d-flex gap-2">
-                <a href="/giris" class="btn btn-outline-light btn-sm">Giriş</a>
-                <a href="/kayit" class="btn btn-turuncu btn-sm">Kayıt ol</a>
+            <div class="d-flex gap-2 align-items-center">
+               <% if (kullanici) { %>
+                    <!-- Giriş yapılmışsa -->
+                    <span class="text-white small me-2">
+                    <i class="bi bi-person-circle"></i> <%= kullanici.ad %>
+                    </span>
+                    <form action="/cikis" method="POST" class="m-0">
+                    <button type="submit" class="btn btn-outline-light btn-sm">Çıkış</button>
+                    </form>
+                    <% } else { %>
+                    <!-- Giriş yapılmamışsa -->
+                    <a href="/giris" class="btn btn-outline-light btn-sm">Giriş</a>
+                    <a href="/kayit" class="btn btn-turuncu btn-sm">Kayıt ol</a>
+                    <% } %>
             </div>
         </div>
 

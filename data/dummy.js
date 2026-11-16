@@ -1,3 +1,8 @@
+const bcrypt = require("bcryptjs");
+
+// Örnek kullanıcıların hepsinin şifresi: 123456
+// hashSync: şifreyi uygulama başlarken bir kez hash'ler
+const ornekSifre = bcrypt.hashSync("123456", 10);
 const bolumler = [
     { id: 1, ad: "Yapay Zeka ve Veri Mühendisliği", slug: "yapay-zeka-ve-veri-muhendisligi" },
     { id: 2, ad: "Yazılım Mühendisliği", slug: "yazilim-muhendisligi" }
@@ -35,12 +40,12 @@ const duyurular = [
 ];
 
 const kullanicilar = [
-    { id: 1, ad: "kubra", puan: 340 },
-    { id: 2, ad: "ahmet", puan: 215 },
-    { id: 3, ad: "zeynep", puan: 180 },
-    { id: 4, ad: "mehmet", puan: 95 },
-    { id: 5, ad: "elif", puan: 60 },
-    { id: 6, ad: "can", puan: 20 }
+    { id: 1, ad: "kubra",  email: "kubra@sinaps.com",  sifre: ornekSifre, rol: "admin",     puan: 340 },
+    { id: 2, ad: "ahmet",  email: "ahmet@sinaps.com",  sifre: ornekSifre, rol: "moderator", puan: 215 },
+    { id: 3, ad: "zeynep", email: "zeynep@sinaps.com", sifre: ornekSifre, rol: "ogrenci",   puan: 180 },
+    { id: 4, ad: "mehmet", email: "mehmet@sinaps.com", sifre: ornekSifre, rol: "ogrenci",   puan: 95 },
+    { id: 5, ad: "elif",   email: "elif@sinaps.com",   sifre: ornekSifre, rol: "ogrenci",   puan: 60 },
+    { id: 6, ad: "can",    email: "can@sinaps.com",    sifre: ornekSifre, rol: "ogrenci",   puan: 20 }
 ];
 
 const sorular = [

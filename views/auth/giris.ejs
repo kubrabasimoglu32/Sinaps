@@ -1,0 +1,35 @@
+<%- include("../partials/head") %>
+<%- include("../partials/navbar") %>
+
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="sinaps-kart p-4">
+                <h3 class="mb-1">Giriş yap</h3>
+                <p class="soluk mb-4">Tekrar hoş geldin!</p>
+
+                <% if (hata) { %>
+                    <div class="alert alert-danger py-2"><%= hata %></div>
+                <% } %>
+
+                <form action="/giris" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">E-posta</label>
+                        <input type="email" name="email" class="form-control" value="<%= eski.email || '' %>" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Şifre</label>
+                        <input type="password" name="sifre" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-turuncu w-100">Giriş yap</button>
+                </form>
+
+                <p class="soluk text-center mt-3 mb-0">
+                    Hesabın yok mu? <a href="/kayit">Kayıt ol</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<%- include("../partials/footer") %>
