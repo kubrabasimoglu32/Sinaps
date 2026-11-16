@@ -13,6 +13,7 @@
                 <% } %>
 
                 <form action="/giris" method="POST">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <div class="mb-3">
                         <label class="form-label">E-posta</label>
                         <input type="email" name="email" class="form-control" value="<%= eski.email || '' %>" required>

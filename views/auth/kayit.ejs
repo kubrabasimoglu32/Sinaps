@@ -14,6 +14,7 @@
 
                 <form action="/kayit" method="POST">
                     <div class="mb-3">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                         <label class="form-label">Kullanıcı adı</label>
                         <input type="text" name="ad" class="form-control" value="<%= eski.ad || '' %>" required>
                     </div>

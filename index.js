@@ -1,29 +1,32 @@
 const express = require("express");
 const path = require("path");
+const session = require("express-session");
 
 const app = express();
 
 // ===== AYARLAR =====
 app.set("view engine", "ejs");
 
-// ===== MIDDLEWARE =====
+// ===== 1. STATİK DOSYALAR VE FORM VERİSİ =====
 app.use("/static", express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
-// ===== OTURUM (SESSION) =====
-const session = require("express-session");
+
+// ===== 2. OTURUM (SESSION) =====
 app.use(session({
-    secret: "sinaps-gizli-anahtar-degistir",  // çerezleri imzalamak için kullanılır
+    secret: "sinaps-gizli-anahtar-degistir",
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 gün (milisaniye cinsinden)
+    cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 gün
 }));
 
-// Oturumdaki kullanıcıyı bütün sayfalara gönder
+// ===== 3. KULLANICI VE CSRF KODUNU SAYFALARA GÖNDER =====
 app.use(require("./middleware/locals"));
 
-// ===== ROUTES =====
-// ===== ROUTES =====
+// ===== 4. CSRF KORUMASI (route'lardan ÖNCE olmalı!) =====
+const { csrfKoruma } = require("./middleware/csrf");
+app.use(csrfKoruma);
 
+// ===== 5. ROUTES =====
 const siteRouter = require("./routes/site");
 const authRouter = require("./routes/auth");
 const adminRouter = require("./routes/admin");
@@ -31,9 +34,21 @@ app.use("/", siteRouter);
 app.use("/", authRouter);
 app.use("/admin", adminRouter);
 
-// ===== 404: Yukarıdaki hiçbir adrese uymayan istekler buraya düşer =====
+// ===== 6. 404 =====
 app.use((req, res) => {
     res.status(404).render("404", { title: "Sayfa bulunamadı" });
+});
+
+// ===== 7. HATA YAKALAYICI =====
+app.use((err, req, res, next) => {
+    if (err.code === "EBADCSRFTOKEN") {
+        return res.status(403).render("403", {
+            title: "Geçersiz istek",
+            mesaj: "Güvenlik doğrulaması başarısız oldu. Sayfayı yenileyip tekrar dene."
+        });
+    }
+    console.error(err);
+    res.status(500).send("Sunucuda bir hata oluştu.");
 });
 
 // ===== SUNUCU =====

@@ -4,7 +4,9 @@
 <main class="container py-5 text-center">
     <h1 class="display-1 fw-semibold" style="color: var(--turuncu);">403</h1>
     <h4 class="mb-3">Bu sayfaya erişim yetkin yok</h4>
-    <p class="soluk mb-4">Bu bölüm sadece yetkili kullanıcılara açık.</p>
+    <p class="soluk mb-4">
+    <%= typeof mesaj !== "undefined" ? mesaj : "Bu bölüm sadece yetkili kullanıcılara açık." %>
+    </p>
     <a href="/" class="btn btn-turuncu px-4">Ana sayfaya dön</a>
 </main>
 
