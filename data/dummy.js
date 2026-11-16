@@ -10,9 +10,24 @@ const dersler = [
 ];
 
 const notlar = [
-    { id: 1, dersId: 1, baslik: "Vize Özeti", slug: "vize-ozeti", yukleyen: "kubra", indirme: 42 },
-    { id: 2, dersId: 1, baslik: "Bağlı Listeler Ders Notu", slug: "bagli-listeler-ders-notu", yukleyen: "ahmet", indirme: 17 },
-    { id: 3, dersId: 2, baslik: "Express Router Özeti", slug: "express-router-ozeti", yukleyen: "zeynep", indirme: 8 }
+    {
+        id: 1, dersId: 1, baslik: "Vize Özeti", slug: "vize-ozeti",
+        yukleyen: "kubra", indirme: 42, begeni: 5,
+        tur: "Özet", dosyaTuru: "PDF", sayfaSayisi: 8, tarih: "2026-11-15",
+        aciklama: "Ağaçlar, yığıtlar ve kuyruklar konularının vize öncesi özeti. Çıkmış sorulardan örnekler var."
+    },
+    {
+        id: 2, dersId: 1, baslik: "Bağlı Listeler Ders Notu", slug: "bagli-listeler-ders-notu",
+        yukleyen: "ahmet", indirme: 17, begeni: 2,
+        tur: "Ders notu", dosyaTuru: "PDF", sayfaSayisi: 12, tarih: "2026-11-10",
+        aciklama: "Tek ve çift yönlü bağlı listeler; ekleme, silme ve arama işlemleri."
+    },
+    {
+        id: 3, dersId: 2, baslik: "Express Router Özeti", slug: "express-router-ozeti",
+        yukleyen: "zeynep", indirme: 8, begeni: 1,
+        tur: "Özet", dosyaTuru: "PDF", sayfaSayisi: 4, tarih: "2026-11-12",
+        aciklama: "Express'te router yapısı, middleware ve route parametreleri."
+    }
 ];
 
 const duyurular = [

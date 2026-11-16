@@ -1,0 +1,103 @@
+<%- include("partials/head") %>
+<%- include("partials/navbar") %>
+
+<!-- ===== BAŞLIK ŞERİDİ ===== -->
+<section class="sayfa-baslik">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="/">Ana Sayfa</a>&nbsp;›&nbsp;
+            <a href="/bolum/<%= bolum.slug %>"><%= bolum.ad %></a>&nbsp;›&nbsp;
+            <a href="/ders/<%= ders.slug %>"><%= ders.ad %></a>&nbsp;›&nbsp;
+            <%= not.baslik %>
+        </nav>
+        <h2 class="mb-2"><%= not.baslik %></h2>
+        <span class="etiket"><%= not.tur %></span>
+        <span class="etiket"><%= not.dosyaTuru %> · <%= not.sayfaSayisi %> sayfa</span>
+        <span class="soluk ms-1">
+            <%= new Date(not.tarih).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" }) %>
+        </span>
+    </div>
+</section>
+
+<main class="container py-5">
+    <div class="row g-4">
+
+        <!-- ===== SOL: ÖNİZLEME VE AÇIKLAMA ===== -->
+        <div class="col-lg-8">
+
+            <div class="sinaps-kart p-0 mb-4">
+                <div class="px-3 py-2 border-bottom">
+                    <h6 class="mb-0">Önizleme · 1. sayfa</h6>
+                </div>
+                <div class="onizleme">
+                    <!-- GEÇİCİ: Dosya yükleme gelince buraya gerçek ilk sayfanın resmi gelecek -->
+                    <div class="satir baslik"></div>
+                    <% [95, 90, 93, 70, 0, 88, 94, 91, 65, 0, 92, 89, 95, 80].forEach(genislik => { %>
+                        <div class="satir" style="width: <%= genislik %>%;"></div>
+                    <% }) %>
+
+                    <div class="kilit-perde">
+                        <i class="bi bi-lock fs-4"></i>
+                        <span>Kalan <%= not.sayfaSayisi - 1 %> sayfa indirince açılır</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sinaps-kart">
+                <h6>Açıklama</h6>
+                <p class="mb-0"><%= not.aciklama %></p>
+            </div>
+        </div>
+
+        <!-- ===== SAĞ: İNDİRME, YÜKLEYEN, DİĞER NOTLAR ===== -->
+        <div class="col-lg-4">
+
+            <!-- İndirme hakkı -->
+            <div class="sinaps-kart turuncu-serit mb-3">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="soluk">İndirme hakkın</span>
+                    <span class="puan"><%= hak.kalan %> / <%= hak.toplam %></span>
+                </div>
+                <div class="ilerleme mb-3">
+                    <div class="ilerleme-dolu" style="width: <%= Math.round(hak.kalan / hak.toplam * 100) %>%;"></div>
+                </div>
+
+                <% if (hak.kalan > 0) { %>
+                    <a href="#" class="btn btn-turuncu w-100"><i class="bi bi-download"></i> İndir</a>
+                    <p class="soluk text-center mt-2 mb-0">Not yükleyerek hakkını artır</p>
+                <% } else { %>
+                    <button class="btn btn-secondary w-100" disabled>İndirme hakkın bitti</button>
+                    <a href="/not-yukle" class="d-block text-center mt-2">Not yükle, hak kazan</a>
+                <% } %>
+            </div>
+
+            <!-- Yükleyen kişi -->
+            <div class="sinaps-kart mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="avatar"><%= yukleyen.ad.charAt(0) %></div>
+                    <div>
+                        <div class="fw-semibold" style="color: var(--lacivert);"><%= yukleyen.ad %></div>
+                        <span class="soluk"><%= yukleyen.seviye %> · <%= yukleyen.puan %> puan</span>
+                    </div>
+                </div>
+                <p class="soluk mt-2 mb-2"><%= not.indirme %> indirme · <%= not.begeni %> beğeni</p>
+                <button class="btn btn-outline-primary btn-sm w-100"><i class="bi bi-heart"></i> Beğen</button>
+            </div>
+
+            <!-- Bu dersin diğer notları -->
+            <div class="sinaps-kart">
+                <h6>Bu dersin diğer notları</h6>
+                <% if (digerNotlar.length === 0) { %>
+                    <p class="soluk mb-0">Bu derste başka not yok.</p>
+                <% } else { %>
+                    <% digerNotlar.forEach(diger => { %>
+                        <div class="py-1"><a href="/not/<%= diger.slug %>"><%= diger.baslik %></a></div>
+                    <% }) %>
+                <% } %>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<%- include("partials/footer") %>

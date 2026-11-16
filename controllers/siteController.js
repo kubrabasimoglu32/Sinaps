@@ -1,5 +1,5 @@
 const { bolumler, dersler, notlar, duyurular, kullanicilar, sorular } = require("../data/dummy");
-
+const seviyeBul = require("../helpers/seviye");
 // ===================================================
 // YARDIMCI FONKSİYONLAR (her zaman en üstte dursun)
 // ===================================================
@@ -84,5 +84,34 @@ exports.dersDetay = (req, res) => {
         bolum: bolum,
         notlar: dersNotlari,
         sorular: dersSorulari
+    });
+};
+    // ===== NOT DETAY: /not/:slug =====
+exports.notDetay = (req, res) => {
+    const not = notlar.find(n => n.slug === req.params.slug);
+    if (!not) return bulunamadi(res);
+
+    // Breadcrumb için ders ve bölüm
+    const ders = dersBul(not.dersId);
+    const bolum = bolumler.find(b => b.id === ders.bolumId);
+
+    // Yükleyen kişi ve seviyesi
+    const kisi = kullanicilar.find(k => k.ad === not.yukleyen);
+    const yukleyen = { ...kisi, seviye: seviyeBul(kisi.puan) };
+
+    // Aynı dersin diğer notları (bu not hariç)
+    const digerNotlar = notlar.filter(n => n.dersId === not.dersId && n.id !== not.id);
+
+    // GEÇİCİ: Giriş sistemi gelince gerçek kullanıcının hakkı hesaplanacak
+    const hak = { kalan: 3, toplam: 5 };
+
+    res.render("not", {
+        title: not.baslik,
+        not: not,
+        ders: ders,
+        bolum: bolum,
+        yukleyen: yukleyen,
+        digerNotlar: digerNotlar,
+        hak: hak
     });
 };

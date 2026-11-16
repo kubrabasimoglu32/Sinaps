@@ -124,3 +124,72 @@ h1, h2, h3, h4, h5, h6 { color: var(--lacivert); }
     padding: 32px;
     text-align: center;
 }
+/* ===== ETİKETLER ===== */
+.etiket {
+    display: inline-block;
+    background-color: var(--acik-mavi);
+    color: #0C447C;
+    font-size: 0.75rem;
+    padding: 3px 9px;
+    border-radius: 4px;
+    margin-right: 4px;
+}
+
+/* ===== ÖNİZLEME ===== */
+.onizleme {
+    position: relative;
+    height: 340px;
+    overflow: hidden;
+    background: #ffffff;
+    padding: 24px;
+}
+.onizleme .satir {
+    height: 9px;
+    background-color: #F1EFE8;
+    margin-bottom: 10px;
+}
+.onizleme .satir.baslik {
+    height: 14px;
+    background-color: var(--acik-mavi);
+    width: 60%;
+    margin-bottom: 18px;
+}
+/* Önizlemenin altını kapatan kilit perdesi */
+.kilit-perde {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 120px;
+    background-color: var(--zemin);
+    border-top: 1px dashed #B5D4F4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #0C447C;
+}
+
+/* ===== İNDİRME HAKKI ÇUBUĞU ===== */
+.ilerleme {
+    height: 8px;
+    background-color: #FAEEDA;
+}
+.ilerleme-dolu {
+    height: 8px;
+    background-color: var(--turuncu);
+}
+
+/* ===== PROFİL HARFİ ===== */
+.avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: var(--acik-mavi);
+    color: #0C447C;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    text-transform: uppercase;
+}
