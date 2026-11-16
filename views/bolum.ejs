@@ -1,0 +1,37 @@
+<%- include("partials/head") %>
+<%- include("partials/navbar") %>
+
+<section class="sayfa-baslik">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="/">Ana Sayfa</a>&nbsp;›&nbsp;<a href="/bolumler">Bölümler</a>&nbsp;›&nbsp;<%= bolum.ad %>
+        </nav>
+        <h2 class="mb-0"><%= bolum.ad %></h2>
+    </div>
+</section>
+
+<main class="container py-5">
+    <h5 class="mb-3">Dersler</h5>
+
+    <% if (dersler.length === 0) { %>
+        <div class="bos-durum">
+            <p class="soluk mb-0">Bu bölüme henüz ders eklenmemiş.</p>
+        </div>
+    <% } else { %>
+        <div class="row g-3">
+            <% dersler.forEach(ders => { %>
+                <div class="col-md-6">
+                    <div class="sinaps-kart">
+                        <h6 class="mb-1"><a href="/ders/<%= ders.slug %>"><%= ders.ad %></a></h6>
+                        <span class="soluk">
+                            <i class="bi bi-journal-text"></i> <%= ders.notSayisi %> not ·
+                            <i class="bi bi-chat-dots"></i> <%= ders.soruSayisi %> soru
+                        </span>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    <% } %>
+</main>
+
+<%- include("partials/footer") %>

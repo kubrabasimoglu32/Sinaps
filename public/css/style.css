@@ -107,3 +107,20 @@ h1, h2, h3, h4, h5, h6 { color: var(--lacivert); }
 .puan { color: #854F0B; font-weight: 500; }
 .sinaps-kart a { color: var(--lacivert); text-decoration: none; }
 .sinaps-kart a:hover { color: var(--mavi); }
+
+/* ===== SAYFA BAŞLIK ŞERİDİ ===== */
+.sayfa-baslik {
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--acik-mavi);
+    padding: 32px 0;
+}
+.breadcrumb { margin-bottom: 8px; font-size: 0.875rem; }
+.breadcrumb a { color: var(--mavi); text-decoration: none; }
+
+/* ===== BOŞ DURUM (henüz içerik yoksa) ===== */
+.bos-durum {
+    background: #ffffff;
+    border: 1px dashed #B5D4F4;
+    padding: 32px;
+    text-align: center;
+}

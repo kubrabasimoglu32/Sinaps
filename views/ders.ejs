@@ -1,0 +1,68 @@
+<%- include("partials/head") %>
+<%- include("partials/navbar") %>
+
+<section class="sayfa-baslik">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="/">Ana Sayfa</a>&nbsp;›&nbsp;
+            <a href="/bolumler">Bölümler</a>&nbsp;›&nbsp;
+            <a href="/bolum/<%= bolum.slug %>"><%= bolum.ad %></a>&nbsp;›&nbsp;
+            <%= ders.ad %>
+        </nav>
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <h2 class="mb-0"><%= ders.ad %></h2>
+            <a href="/not-yukle" class="btn btn-turuncu"><i class="bi bi-upload"></i> Not yükle</a>
+        </div>
+    </div>
+</section>
+
+<main class="container py-5">
+    <div class="row g-4">
+
+        <!-- NOTLAR -->
+        <div class="col-lg-8">
+            <h5 class="mb-3">Notlar (<%= notlar.length %>)</h5>
+
+            <% if (notlar.length === 0) { %>
+                <div class="bos-durum">
+                    <p class="soluk mb-3">Bu derse henüz not yüklenmemiş.</p>
+                    <a href="/not-yukle" class="btn btn-turuncu btn-sm">İlk notu sen yükle, puanı kap!</a>
+                </div>
+            <% } else { %>
+                <% notlar.forEach(not => { %>
+                    <div class="sinaps-kart mb-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1"><a href="/not/<%= not.slug %>"><%= not.baslik %></a></h6>
+                            <span class="soluk"><%= not.yukleyen %> · <%= not.indirme %> indirme</span>
+                        </div>
+                        <a href="/not/<%= not.slug %>" class="btn btn-turuncu btn-sm">İndir</a>
+                    </div>
+                <% }) %>
+            <% } %>
+        </div>
+
+        <!-- SORULAR -->
+        <div class="col-lg-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Sorular</h5>
+                <a href="/soru-sor" class="btn btn-outline-primary btn-sm">Soru sor</a>
+            </div>
+
+            <% if (sorular.length === 0) { %>
+                <div class="bos-durum">
+                    <p class="soluk mb-0">Henüz soru sorulmamış.</p>
+                </div>
+            <% } else { %>
+                <% sorular.forEach(soru => { %>
+                    <div class="sinaps-kart mb-3">
+                        <h6 class="mb-1"><a href="/soru/<%= soru.slug %>"><%= soru.baslik %></a></h6>
+                        <span class="soluk"><%= soru.soran %> · <%= soru.cevapSayisi %> cevap</span>
+                    </div>
+                <% }) %>
+            <% } %>
+        </div>
+
+    </div>
+</main>
+
+<%- include("partials/footer") %>
