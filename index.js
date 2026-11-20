@@ -29,9 +29,11 @@ app.use(csrfKoruma);
 // ===== 5. ROUTES =====
 const siteRouter = require("./routes/site");
 const authRouter = require("./routes/auth");
+const soruRouter = require("./routes/soru");
 const adminRouter = require("./routes/admin");
 app.use("/", siteRouter);
 app.use("/", authRouter);
+app.use("/", soruRouter);
 app.use("/admin", adminRouter);
 
 // ===== 6. 404 =====

@@ -1,0 +1,45 @@
+<%- include("../partials/head") %>
+
+<div class="admin-duzen">
+    <%- include("partials/menu") %>
+
+    <main class="admin-icerik">
+        <nav class="breadcrumb"><a href="/admin/sorular">Sorular</a>&nbsp;›&nbsp;Cevaplar</nav>
+
+        <!-- Soru -->
+        <div class="sinaps-kart mb-4">
+            <div class="ders-etiketi"><%= soru.ders.ad %></div>
+            <h5 class="mb-1"><%= soru.baslik %></h5>
+            <span class="soluk"><%= soru.soran %> · <%= soru.tarih %></span>
+            <p class="mt-2 mb-0"><%= soru.icerik %></p>
+        </div>
+
+        <h5 class="mb-3"><%= cevaplar.length %> cevap</h5>
+
+        <% if (cevaplar.length === 0) { %>
+            <div class="bos-durum"><p class="soluk mb-0">Bu soruya henüz cevap yazılmamış.</p></div>
+        <% } %>
+
+        <% cevaplar.forEach(c => { %>
+            <div class="sinaps-kart mb-3 <%= c.id === soru.enIyiCevapId ? 'yesil-serit' : '' %>">
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                    <div>
+                        <strong style="color: var(--lacivert);"><%= c.yazan %></strong>
+                        <span class="soluk">· <%= c.tarih %></span>
+                        <% if (c.id === soru.enIyiCevapId) { %><span class="en-iyi-etiket ms-1">En iyi cevap</span><% } %>
+                        <p class="mt-2 mb-0"><%= c.icerik %></p>
+                    </div>
+                    <form action="/admin/cevaplar/<%= c.id %>/sil" method="POST" class="m-0"
+                          onsubmit="return confirm('Bu cevap silinsin mi?')">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Sil</button>
+                    </form>
+                </div>
+            </div>
+        <% }) %>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

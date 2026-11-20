@@ -79,8 +79,26 @@ const kullanicilar = [
 ];
 
 const sorular = [
-    { id: 1, dersId: 1, baslik: "Bağlı liste ile dizi farkı nedir?", slug: "bagli-liste-ile-dizi-farki-nedir", soran: "mehmet", cevapSayisi: 3 },
-    { id: 2, dersId: 2, baslik: "Express'te middleware ne işe yarar?", slug: "expresste-middleware-ne-ise-yarar", soran: "elif", cevapSayisi: 1 }
+    {
+        id: 1, dersId: 1, baslik: "Bağlı liste ile dizi farkı nedir?", slug: "bagli-liste-ile-dizi-farki-nedir",
+        soran: "mehmet", tarih: "2026-11-16", enIyiCevapId: 1,
+        icerik: "Vizede çıkar dediler. İkisi de veri saklıyor ama ne zaman hangisini kullanmalıyız? Ekleme ve silme hızı farklı mı?"
+    },
+    {
+        id: 2, dersId: 2, baslik: "Express'te middleware ne işe yarar?", slug: "expresste-middleware-ne-ise-yarar",
+        soran: "elif", tarih: "2026-11-14", enIyiCevapId: null,
+        icerik: "Derste app.use ile bir şeyler ekledik ama tam olarak ne işe yaradığını anlamadım."
+    }
 ];
 
-module.exports = { bolumler, dersler, notlar,bekleyenNotlar, duyurular, kullanicilar, sorular };
+const cevaplar = [
+    {
+        id: 1, soruId: 1, yazan: "kubra", tarih: "2026-11-16",
+        icerik: "Dizide elemanlar bellekte yan yana durur, indeksle erişim çok hızlıdır.\nBağlı listede araya ekleme ve silme hızlıdır ama bir elemana ulaşmak için baştan gezmek gerekir."
+    },
+    { id: 2, soruId: 1, yazan: "ahmet", tarih: "2026-11-16", icerik: "Dizinin boyutu baştan bellidir, bağlı liste ise gerektikçe büyür." },
+    { id: 3, soruId: 1, yazan: "zeynep", tarih: "2026-11-17", icerik: "Sık rastgele erişim gerekiyorsa dizi, sık ekleme-silme varsa bağlı liste daha uygun." },
+    { id: 4, soruId: 2, yazan: "kubra", tarih: "2026-11-15", icerik: "Middleware, istek route'a ulaşmadan önce araya giren fonksiyondur. Giriş kontrolü, form verisini okuma gibi işleri yapar." }
+];
+
+module.exports = { bolumler, dersler, notlar,bekleyenNotlar, duyurular, kullanicilar, sorular, cevaplar };

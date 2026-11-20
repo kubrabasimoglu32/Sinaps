@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const moderasyonController = require("../controllers/moderasyonController");
 
 const { rolGerekli } = require("../middleware/yetki");
 const { bekleyenNotlar } = require("../data/dummy");
@@ -19,7 +20,16 @@ router.get("/", adminController.genelBakis);
 router.get("/notlar", adminController.notOnaylari);
 router.post("/notlar/:id/onayla", adminController.notOnayla);
 router.post("/notlar/:id/reddet", adminController.notReddet);
+
+// Soru ve cevap moderasyonu (admin ve moderatör)
+
+router.get("/sorular", moderasyonController.soruListesi);
+router.get("/sorular/:id", moderasyonController.soruDetay);
+router.post("/sorular/:id/sil", moderasyonController.soruSil);
+router.post("/cevaplar/:id/sil", moderasyonController.cevapSil);
+
 // ===== SADECE ADMİN =====
+
 const sadeceAdmin = rolGerekli("admin");
 
 router.get("/duyurular", sadeceAdmin, adminController.duyuruListesi);

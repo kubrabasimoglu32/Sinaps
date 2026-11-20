@@ -1,0 +1,96 @@
+<%- include("partials/head") %>
+<%- include("partials/navbar") %>
+
+<section class="sayfa-baslik">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="/">Ana Sayfa</a>&nbsp;›&nbsp;<a href="/sorular">Soru-Cevap</a>&nbsp;›&nbsp;<%= ders.ad %>
+        </nav>
+        <h2 class="mb-0"><%= soru.baslik %></h2>
+    </div>
+</section>
+
+<main class="container py-5">
+    <div class="row g-4">
+
+        <!-- ===== SOL: SORU, CEVAPLAR, FORM ===== -->
+        <div class="col-lg-8">
+
+            <!-- Soru -->
+            <div class="sinaps-kart mb-4">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <div class="avatar kucuk"><%= soran.ad.charAt(0) %></div>
+                    <strong style="color: var(--lacivert);"><%= soran.ad %></strong>
+                    <span class="soluk">· <%= soran.seviye %> · <%= soru.tarih %></span>
+                </div>
+                <% soru.icerik.split("\n").forEach(p => { %><p class="mb-1"><%= p %></p><% }) %>
+            </div>
+
+            <!-- Cevaplar -->
+            <h5 class="mb-3"><%= cevaplar.length %> cevap</h5>
+
+            <% if (cevaplar.length === 0) { %>
+                <div class="bos-durum mb-4"><p class="soluk mb-0">Henüz cevap yok. İlk cevabı sen yaz!</p></div>
+            <% } %>
+
+            <% cevaplar.forEach(cevap => { %>
+                <% const enIyiMi = cevap.id === soru.enIyiCevapId; %>
+                <div id="cevap-<%= cevap.id %>" class="sinaps-kart mb-3 <%= enIyiMi ? 'yesil-serit' : '' %>">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="avatar kucuk"><%= cevap.kisi.ad.charAt(0) %></div>
+                            <strong style="color: var(--lacivert);"><%= cevap.kisi.ad %></strong>
+                            <span class="soluk">· <%= cevap.kisi.seviye %></span>
+                        </div>
+
+                        <% if (enIyiMi) { %>
+                            <span class="en-iyi-etiket"><i class="bi bi-check-lg"></i> En iyi cevap</span>
+                        <% } else if (soranBenim && cevap.yazan !== soru.soran) { %>
+                            <form action="/soru/<%= soru.slug %>/en-iyi/<%= cevap.id %>" method="POST" class="m-0">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <button type="submit" class="btn btn-sm btn-outline-success">En iyi seç</button>
+                            </form>
+                        <% } %>
+                    </div>
+                    <% cevap.icerik.split("\n").forEach(p => { %><p class="mb-1"><%= p %></p><% }) %>
+                </div>
+            <% }) %>
+
+            <!-- Cevap formu -->
+            <% if (kullanici) { %>
+                <div class="sinaps-kart turuncu-serit mt-4">
+                    <h6>Cevabını yaz</h6>
+                    <form action="/soru/<%= soru.slug %>/cevap" method="POST">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <textarea name="icerik" class="form-control mb-3" rows="4" required></textarea>
+                        <button type="submit" class="btn btn-turuncu">
+                            Gönder<%= kullanici.ad !== soru.soran ? " · +5 puan" : "" %>
+                        </button>
+                    </form>
+                </div>
+            <% } else { %>
+                <div class="bos-durum mt-4">
+                    <p class="mb-0">Cevap yazmak için <a href="/giris">giriş yap</a> ya da <a href="/kayit">kayıt ol</a>.</p>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- ===== SAĞ: DERS VE PUAN KURALLARI ===== -->
+        <div class="col-lg-4">
+            <div class="sinaps-kart mb-3">
+                <h6>Ders</h6>
+                <a href="/ders/<%= ders.slug %>"><%= ders.ad %></a>
+                <div class="soluk"><%= dersNotSayisi %> not · <%= dersSoruSayisi %> soru</div>
+            </div>
+            <div class="sinaps-kart turuncu-serit">
+                <h6>Puan kuralları</h6>
+                <div class="d-flex justify-content-between"><span class="soluk">Cevap yaz</span><span class="puan">+5</span></div>
+                <div class="d-flex justify-content-between"><span class="soluk">En iyi cevap seçil</span><span class="puan">+15</span></div>
+                <div class="d-flex justify-content-between"><span class="soluk">Soru sor</span><span class="puan">+1</span></div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<%- include("partials/footer") %>

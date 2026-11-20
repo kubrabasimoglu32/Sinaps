@@ -1,4 +1,4 @@
-const { bolumler, dersler, notlar, duyurular, kullanicilar, sorular } = require("../data/dummy");
+const { bolumler, dersler, notlar, duyurular, kullanicilar, sorular, cevaplar } = require("../data/dummy");
 const seviyeBul = require("../helpers/seviye");
 // ===================================================
 // YARDIMCI FONKSİYONLAR (her zaman en üstte dursun)
@@ -19,7 +19,12 @@ const bolumOzeti = (bolum) => {
 const bulunamadi = (res) => res.status(404).render("404", { title: "Sayfa bulunamadı" });
 // Duyuruları yeniden eskiye sıralar
 const yeniDuyurular = () => [...duyurular].sort((a, b) => b.tarih.localeCompare(a.tarih));
-
+// Soruya ders bilgisini ve cevap sayısını ekler
+const soruOzeti = (soru) => ({
+    ...soru,
+    ders: dersBul(soru.dersId),
+    cevapSayisi: cevaplar.filter(c => c.soruId === soru.id).length
+});
 
 // ===================================================
 // SAYFALAR
@@ -35,7 +40,7 @@ exports.anasayfa = (req, res) => {
         .sort((a, b) => b.puan - a.puan)
         .slice(0, 5);
 
-    const soruListesi = sorular.map(soru => ({ ...soru, ders: dersBul(soru.dersId) }));
+    const soruListesi = sorular.map(soruOzeti);
 
     res.render("index", {
         title: "Ana Sayfa",
@@ -78,8 +83,7 @@ exports.dersDetay = (req, res) => {
 
     const bolum = bolumler.find(b => b.id === ders.bolumId);
     const dersNotlari = notlar.filter(n => n.dersId === ders.id);
-    const dersSorulari = sorular.filter(s => s.dersId === ders.id);
-
+    const dersSorulari = sorular.filter(s => s.dersId === ders.id).map(soruOzeti);
     res.render("ders", {
         title: ders.ad,
         ders: ders,

@@ -1,0 +1,48 @@
+<%- include("../partials/head") %>
+
+<div class="admin-duzen">
+    <%- include("partials/menu") %>
+
+    <main class="admin-icerik">
+        <h3 class="mb-1">Sorular</h3>
+        <p class="soluk mb-4">Uygunsuz soruları ve cevapları buradan kaldırabilirsin. Soru silinince bütün cevapları da silinir.</p>
+
+        <% if (sorular.length === 0) { %>
+            <div class="bos-durum"><p class="soluk mb-0">Henüz soru yok.</p></div>
+        <% } else { %>
+            <div class="sinaps-kart p-0">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr><th>Soru</th><th>Ders</th><th>Soran</th><th>Cevap</th><th class="text-end">İşlem</th></tr>
+                    </thead>
+                    <tbody>
+                        <% sorular.forEach(s => { %>
+                            <tr>
+                                <td>
+                                    <%= s.baslik %>
+                                    <% if (s.enIyiCevapId) { %><span class="en-iyi-etiket ms-1">Çözüldü</span><% } %>
+                                </td>
+                                <td><%= s.ders.ad %></td>
+                                <td><%= s.soran %></td>
+                                <td><%= s.cevapSayisi %></td>
+                                <td class="text-end text-nowrap">
+                                    <a href="/soru/<%= s.slug %>" class="btn btn-sm btn-outline-primary" target="_blank">Gör</a>
+                                    <a href="/admin/sorular/<%= s.id %>" class="btn btn-sm btn-outline-secondary">Cevaplar</a>
+                                    <form action="/admin/sorular/<%= s.id %>/sil" method="POST" class="d-inline"
+                                          onsubmit="return confirm('Soru ve bütün cevapları silinsin mi?')">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Sil</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } %>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

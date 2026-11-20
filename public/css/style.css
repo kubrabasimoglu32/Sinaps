@@ -268,3 +268,20 @@ h1, h2, h3, h4, h5, h6 { color: var(--lacivert); }
 }
 .grafik-cubuk { flex: 1; background-color: #B5D4F4; }
 .grafik-cubuk.bugun { background-color: var(--mavi); }
+/* ===== SORU-CEVAP ===== */
+.sinaps-kart.yesil-serit {
+    border-top-color: #639922;
+    background-color: #FBFDF7;
+}
+.en-iyi-etiket {
+    background-color: #EAF3DE;
+    color: #27500A;
+    font-size: 0.75rem;
+    padding: 3px 9px;
+    border-radius: 4px;
+}
+.avatar.kucuk {
+    width: 30px;
+    height: 30px;
+    font-size: 0.8rem;
+}

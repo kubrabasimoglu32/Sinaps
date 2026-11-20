@@ -1,0 +1,62 @@
+<%- include("partials/head") %>
+<%- include("partials/navbar") %>
+
+<section class="sayfa-baslik">
+    <div class="container">
+        <nav class="breadcrumb"><a href="/">Ana Sayfa</a>&nbsp;›&nbsp;<a href="/sorular">Soru-Cevap</a>&nbsp;›&nbsp;Soru sor</nav>
+        <h2 class="mb-0">Soru sor</h2>
+    </div>
+</section>
+
+<main class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="sinaps-kart p-4">
+                <% if (hata) { %>
+                    <div class="alert alert-danger py-2"><%= hata %></div>
+                <% } %>
+
+                <form action="/soru-sor" method="POST">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+                    <div class="mb-3">
+                        <label class="form-label">Ders</label>
+                        <select name="ders" class="form-select" required>
+                            <option value="">Ders seç</option>
+                            <% dersler.forEach(d => { %>
+                                <option value="<%= d.slug %>" <%= eski.dersSlug === d.slug ? "selected" : "" %>><%= d.ad %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Başlık</label>
+                        <input type="text" name="baslik" class="form-control" maxlength="150"
+                               placeholder="Bağlı liste ile dizi farkı nedir?" value="<%= eski.baslik || '' %>" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Açıklama</label>
+                        <textarea name="icerik" class="form-control" rows="6"
+                                  placeholder="Nerede takıldığını anlat" required><%= eski.icerik || '' %></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-turuncu">Soruyu gönder</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="sinaps-kart turuncu-serit">
+                <h6>İyi bir soru için</h6>
+                <ul class="soluk ps-3 mb-0">
+                    <li>Başlığı kısa ve net yaz</li>
+                    <li>Nerede takıldığını açıkla</li>
+                    <li>Doğru dersi seç</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</main>
+
+<%- include("partials/footer") %>
