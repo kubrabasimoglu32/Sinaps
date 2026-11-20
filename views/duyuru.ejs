@@ -1,0 +1,43 @@
+<%- include("partials/head") %>
+<%- include("partials/navbar") %>
+
+<section class="sayfa-baslik">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="/">Ana Sayfa</a>&nbsp;›&nbsp;<a href="/duyurular">Duyurular</a>&nbsp;›&nbsp;<%= duyuru.baslik %>
+        </nav>
+        <h2 class="mb-1"><%= duyuru.baslik %></h2>
+        <span class="soluk">
+            <%= new Date(duyuru.tarih).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" }) %>
+            · <%= duyuru.yazar %>
+        </span>
+    </div>
+</section>
+
+<main class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="sinaps-kart p-4">
+                <!-- İçeriği satır sonlarından bölüp her satırı ayrı paragraf yap -->
+                <% duyuru.icerik.split("\n").forEach(paragraf => { %>
+                    <p><%= paragraf %></p>
+                <% }) %>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="sinaps-kart">
+                <h6>Diğer duyurular</h6>
+                <% if (digerleri.length === 0) { %>
+                    <p class="soluk mb-0">Başka duyuru yok.</p>
+                <% } else { %>
+                    <% digerleri.forEach(d => { %>
+                        <div class="py-1"><a href="/duyuru/<%= d.slug %>"><%= d.baslik %></a></div>
+                    <% }) %>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</main>
+
+<%- include("partials/footer") %>

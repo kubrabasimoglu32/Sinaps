@@ -1,0 +1,24 @@
+Şimdiye kadar ne yaptık (çalışırken bu sırayla gözden geçir)
+Proje yapısı (MVC): routes adresi controller’a yönlendirir, controllers veriyi hazırlar, views (EJS) ekrana basar, data/dummy.js şimdilik veritabanının yerini tutuyor.
+EJS: <%= %> yazdırır, <%- include %> parça ekler, <% %> döngü ve if çalıştırır. Navbar ve footer partials olarak her sayfada tekrar kullanılıyor.
+Slug ile sayfalar: /ders/:slug → req.params.slug → find ile doğru kaydı bul; bulamazsa 404.
+Kayıt ve giriş: Şifreler bcryptjs ile hash’leniyor, giriş bcrypt.compare ile kontrol ediliyor, kullanıcı express-session ile hatırlanıyor.
+Middleware: locals.js her sayfaya kullanıcıyı ve CSRF kodunu gönderiyor; yetki.js içindeki girisGerekli ve rolGerekli kapı görevlisi gibi çalışıyor.
+Roller: admin, moderator, ogrenci. Yetkisiz kişi 403 görüyor; linki gizlemek değil sunucudaki kontrol asıl güvenlik.
+Admin paneli: Not onaylanınca yayına giriyor ve yükleyene +20 puan, reddedilince -5 puan. Seviyeler puandan hesaplanıyor (Dendrit → Akson → Nöron → Korteks → Beyin).
+CSRF: Her POST formunda gizli _csrf kodu; kod yoksa veya yanlışsa 403. Middleware sıralaması: session → locals → csrfKoruma → routes → 404 → hata yakalayıcı.
+Hocanın sorabileceği sorular
+
+Bunlara kendi cümlelerinle cevap verebiliyorsan konuya hâkimsin demektir:
+
+req.params, req.body ve req.session arasındaki fark nedir?
+Şifreleri neden açık saklamıyorsunuz? Hash ile şifreleme arasındaki fark ne?
+CSRF nedir, sizin sitenizde nasıl korunuyor? Neden GET formlarında token yok?
+Middleware nedir, next() yazılmazsa ne olur?
+Sıralama neden önemli? 404 middleware’i neden en sonda?
+Navbar’daki admin linkini gizlemek yetkilendirme için yeterli mi?
+Slug nedir, neden ?id=1 yerine slug kullandınız?
+401/403/404 durum kodlarının farkı nedir?
+Giriş hatasında neden “e-posta veya şifre hatalı” diyorsunuz?
+Çıkış işlemi neden POST?
+Number(req.params.id) neden gerekli?

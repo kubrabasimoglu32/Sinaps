@@ -1,0 +1,60 @@
+<%- include("../partials/head") %>
+
+<div class="admin-duzen">
+    <%- include("partials/menu") %>
+
+    <main class="admin-icerik">
+        <nav class="breadcrumb">
+            <a href="/admin/duyurular">Duyurular</a>&nbsp;›&nbsp;<%= duzenleme ? "Düzenle" : "Yeni duyuru" %>
+        </nav>
+        <h3 class="mb-4"><%= duzenleme ? "Duyuruyu düzenle" : "Yeni duyuru" %></h3>
+
+        <div class="sinaps-kart p-4" style="max-width: 760px;">
+            <% if (hata) { %>
+                <div class="alert alert-danger py-2"><%= hata %></div>
+            <% } %>
+
+            <form action="<%= action %>" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+                <div class="mb-3">
+                    <label class="form-label">Başlık</label>
+                    <input type="text" name="baslik" id="baslik" class="form-control"
+                           value="<%= eski.baslik || '' %>" maxlength="120" required>
+                    <div class="form-text">Adres: <code>/duyuru/<span id="slugOnizleme">...</span></code></div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">İçerik</label>
+                    <textarea name="icerik" class="form-control" rows="8" required><%= eski.icerik || '' %></textarea>
+                    <div class="form-text">Her satır ayrı bir paragraf olarak görünür.</div>
+                </div>
+
+                <button type="submit" class="btn btn-turuncu">
+                    <%= duzenleme ? "Değişiklikleri kaydet" : "Yayınla" %>
+                </button>
+                <a href="/admin/duyurular" class="btn btn-link">Vazgeç</a>
+            </form>
+        </div>
+    </main>
+</div>
+
+<script>
+    // Başlık yazıldıkça slug'ın nasıl olacağını canlı göster (sadece önizleme)
+    const harfler = { "ç":"c", "ğ":"g", "ı":"i", "ö":"o", "ş":"s", "ü":"u" };
+    const baslikKutusu = document.getElementById("baslik");
+    const onizleme = document.getElementById("slugOnizleme");
+
+    const guncelle = () => {
+        onizleme.textContent = baslikKutusu.value
+            .toLocaleLowerCase("tr-TR")
+            .replace(/[çğıöşü]/g, h => harfler[h])
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-|-$/g, "") || "...";
+    };
+    baslikKutusu.addEventListener("input", guncelle);
+    guncelle();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

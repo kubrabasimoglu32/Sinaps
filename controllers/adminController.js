@@ -1,4 +1,5 @@
-const { notlar, bekleyenNotlar, dersler, kullanicilar } = require("../data/dummy");
+const { notlar, bekleyenNotlar, dersler, kullanicilar, duyurular } = require("../data/dummy");
+const slugUret = require("../helpers/slug");
 
 // ===== YARDIMCILAR =====
 const dersBul = (id) => dersler.find(d => d.id === id);
@@ -67,4 +68,100 @@ exports.notReddet = (req, res) => {
     if (kisi) kisi.puan = Math.max(0, kisi.puan - 5);
 
     geriDon(req, res);
+};
+// ===== DUYURU LİSTESİ: /admin/duyurular =====
+exports.duyuruListesi = (req, res) => {
+    const sirali = [...duyurular].sort((a, b) => b.tarih.localeCompare(a.tarih));
+    res.render("admin/duyurular", { title: "Duyurular", aktif: "duyurular", duyurular: sirali });
+};
+
+// ===== DUYURU EKLEME FORMU: GET /admin/duyurular/yeni =====
+exports.duyuruEkleSayfasi = (req, res) => {
+    res.render("admin/duyuru-form", {
+        title: "Yeni duyuru",
+        aktif: "duyurular",
+        duzenleme: false,
+        action: "/admin/duyurular/yeni",
+        hata: null,
+        eski: {}
+    });
+};
+
+// ===== DUYURU KAYDET: POST /admin/duyurular/yeni =====
+exports.duyuruEkle = (req, res) => {
+    const baslik = (req.body.baslik || "").trim();
+    const icerik = (req.body.icerik || "").trim();
+
+    if (!baslik || !icerik) {
+        return res.render("admin/duyuru-form", {
+            title: "Yeni duyuru", aktif: "duyurular",
+            duzenleme: false, action: "/admin/duyurular/yeni",
+            hata: "Başlık ve içerik boş bırakılamaz.",
+            eski: { baslik, icerik }
+        });
+    }
+
+    const yeniDuyuru = {
+        id: duyurular.length ? Math.max(...duyurular.map(d => d.id)) + 1 : 1,
+        baslik: baslik,
+        slug: slugUret(baslik, duyurular.map(d => d.slug)),    // ← SLUGIFY burada
+        tarih: new Date().toISOString().slice(0, 10),            // bugün: "2026-11-16"
+        yazar: req.session.kullanici.ad,
+        icerik: icerik
+    };
+    duyurular.push(yeniDuyuru);
+
+    res.redirect("/admin/duyurular");
+};
+
+// ===== DUYURU SİL: POST /admin/duyurular/:id/sil =====
+exports.duyuruSil = (req, res) => {
+    const sira = duyurular.findIndex(d => d.id === Number(req.params.id));
+    if (sira !== -1) duyurular.splice(sira, 1);
+    res.redirect("/admin/duyurular");
+};
+
+// ===== DUYURU DÜZENLEME FORMU: GET /admin/duyurular/:id/duzenle =====
+exports.duyuruDuzenleSayfasi = (req, res) => {
+    const duyuru = duyurular.find(d => d.id === Number(req.params.id));
+    if (!duyuru) return res.redirect("/admin/duyurular");
+
+    res.render("admin/duyuru-form", {
+        title: "Duyuruyu düzenle",
+        aktif: "duyurular",
+        duzenleme: true,
+        action: `/admin/duyurular/${duyuru.id}/duzenle`,
+        hata: null,
+        eski: duyuru   // form, mevcut başlık ve içerikle dolu açılsın
+    });
+};
+
+// ===== DUYURU GÜNCELLE: POST /admin/duyurular/:id/duzenle =====
+exports.duyuruGuncelle = (req, res) => {
+    const duyuru = duyurular.find(d => d.id === Number(req.params.id));
+    if (!duyuru) return res.redirect("/admin/duyurular");
+
+    const baslik = (req.body.baslik || "").trim();
+    const icerik = (req.body.icerik || "").trim();
+
+    if (!baslik || !icerik) {
+        return res.render("admin/duyuru-form", {
+            title: "Duyuruyu düzenle", aktif: "duyurular",
+            duzenleme: true, action: `/admin/duyurular/${duyuru.id}/duzenle`,
+            hata: "Başlık ve içerik boş bırakılamaz.",
+            eski: { baslik, icerik }
+        });
+    }
+
+    // Başlık değiştiyse slug'ı yeniden üret
+    if (baslik !== duyuru.baslik) {
+        // Bu duyurunun kendi slug'ı hariç diğer slug'lar
+        const digerSluglar = duyurular.filter(d => d.id !== duyuru.id).map(d => d.slug);
+        duyuru.slug = slugUret(baslik, digerSluglar);
+    }
+
+    duyuru.baslik = baslik;
+    duyuru.icerik = icerik;
+
+    res.redirect("/admin/duyurular");
 };

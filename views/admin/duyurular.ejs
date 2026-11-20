@@ -1,0 +1,45 @@
+<%- include("../partials/head") %>
+
+<div class="admin-duzen">
+    <%- include("partials/menu") %>
+
+    <main class="admin-icerik">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="mb-0">Duyurular</h3>
+            <a href="/admin/duyurular/yeni" class="btn btn-turuncu"><i class="bi bi-plus-lg"></i> Yeni duyuru</a>
+        </div>
+
+        <% if (duyurular.length === 0) { %>
+            <div class="bos-durum"><p class="soluk mb-0">Henüz duyuru yok.</p></div>
+        <% } else { %>
+            <div class="sinaps-kart p-0">
+<table class="table align-middle mb-0">
+    <thead>
+        <tr><th>Başlık</th><th>Tarih</th><th class="text-end">İşlem</th></tr>
+    </thead>
+    <tbody>
+        <% duyurular.forEach(d => { %>
+            <tr>
+                <td><%= d.baslik %></td>
+                <td class="text-nowrap"><%= d.tarih %></td>
+                <td class="text-end text-nowrap">
+                    <a href="/duyuru/<%= d.slug %>" class="btn btn-sm btn-outline-primary" target="_blank">Gör</a>
+                    <a href="/admin/duyurular/<%= d.id %>/duzenle" class="btn btn-sm btn-outline-secondary">Düzenle</a>
+                    <form action="/admin/duyurular/<%= d.id %>/sil" method="POST" class="d-inline"
+                          onsubmit="return confirm('Bu duyuru silinsin mi?')">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Sil</button>
+                    </form>
+                </td>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>
+            </div>
+        <% } %>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

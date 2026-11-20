@@ -19,5 +19,13 @@ router.get("/", adminController.genelBakis);
 router.get("/notlar", adminController.notOnaylari);
 router.post("/notlar/:id/onayla", adminController.notOnayla);
 router.post("/notlar/:id/reddet", adminController.notReddet);
+// ===== SADECE ADMİN =====
+const sadeceAdmin = rolGerekli("admin");
 
+router.get("/duyurular", sadeceAdmin, adminController.duyuruListesi);
+router.get("/duyurular/yeni", sadeceAdmin, adminController.duyuruEkleSayfasi);
+router.post("/duyurular/yeni", sadeceAdmin, adminController.duyuruEkle);
+router.get("/duyurular/:id/duzenle", sadeceAdmin, adminController.duyuruDuzenleSayfasi);
+router.post("/duyurular/:id/duzenle", sadeceAdmin, adminController.duyuruGuncelle);
+router.post("/duyurular/:id/sil", sadeceAdmin, adminController.duyuruSil);
 module.exports = router;

@@ -52,7 +52,21 @@ const bekleyenNotlar = [
 ];
 
 const duyurular = [
-    { id: 1, baslik: "Final Programı Açıklandı", slug: "final-programi-aciklandi", tarih: "2026-11-15", icerik: "Final sınav programı yayınlandı." }
+    {
+        id: 1, baslik: "Final Programı Açıklandı", slug: "final-programi-aciklandi",
+        tarih: "2026-11-15", yazar: "kubra",
+        icerik: "Güz dönemi final sınav programı yayınlandı.\nSınavlar 5 Ocak'ta başlayıp 16 Ocak'ta sona erecek.\nDers bazında sınav tarihlerini bölüm duyuru panosundan da kontrol etmeyi unutmayın."
+    },
+    {
+        id: 2, baslik: "Sinaps Yayında!", slug: "sinaps-yayinda",
+        tarih: "2026-11-10", yazar: "kubra",
+        icerik: "Ders notu paylaşım platformumuz Sinaps yayına girdi.\nNotlarını paylaş, puan kazan ve ihtiyacın olan notlara ulaş.\nİlk notunu yükleyenlere ekstra puan!"
+    },
+    {
+        id: 3, baslik: "Kütüphane Çalışma Saatleri Uzatıldı", slug: "kutuphane-calisma-saatleri-uzatildi",
+        tarih: "2026-11-05", yazar: "kubra",
+        icerik: "Sınav dönemi boyunca merkez kütüphane 24 saat açık olacak."
+    }
 ];
 
 const kullanicilar = [

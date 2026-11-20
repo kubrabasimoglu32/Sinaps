@@ -1,0 +1,32 @@
+<%- include("partials/head") %>
+<%- include("partials/navbar") %>
+
+<section class="sayfa-baslik">
+    <div class="container">
+        <nav class="breadcrumb"><a href="/">Ana Sayfa</a>&nbsp;›&nbsp;Duyurular</nav>
+        <h2 class="mb-0">Duyurular</h2>
+    </div>
+</section>
+
+<main class="container py-5">
+    <% if (duyurular.length === 0) { %>
+        <div class="bos-durum"><p class="soluk mb-0">Henüz duyuru yok.</p></div>
+    <% } else { %>
+        <% duyurular.forEach(duyuru => { %>
+            <div class="sinaps-kart mb-3">
+                <span class="soluk">
+                    <i class="bi bi-calendar"></i>
+                    <%= new Date(duyuru.tarih).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" }) %>
+                </span>
+                <h5 class="mt-1 mb-2"><a href="/duyuru/<%= duyuru.slug %>"><%= duyuru.baslik %></a></h5>
+                <!-- Önizleme: içeriğin ilk 150 karakteri -->
+                <p class="mb-2">
+                    <%= duyuru.icerik.length > 150 ? duyuru.icerik.slice(0, 150) + "..." : duyuru.icerik %>
+                </p>
+                <a href="/duyuru/<%= duyuru.slug %>" class="small">Devamını oku →</a>
+            </div>
+        <% }) %>
+    <% } %>
+</main>
+
+<%- include("partials/footer") %>

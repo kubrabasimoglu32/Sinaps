@@ -17,6 +17,8 @@ const bolumOzeti = (bolum) => {
 
 // 404 sayfasını gösterir
 const bulunamadi = (res) => res.status(404).render("404", { title: "Sayfa bulunamadı" });
+// Duyuruları yeniden eskiye sıralar
+const yeniDuyurular = () => [...duyurular].sort((a, b) => b.tarih.localeCompare(a.tarih));
 
 
 // ===================================================
@@ -40,7 +42,7 @@ exports.anasayfa = (req, res) => {
         bolumler: bolumListesi,
         notlar: notListesi,
         liderler: liderler,
-        duyurular: duyurular,
+        duyurular: yeniDuyurular().slice(0, 3),   // en yeni 3 duyuru
         sorular: soruListesi
     });
 };
@@ -114,4 +116,19 @@ exports.notDetay = (req, res) => {
         digerNotlar: digerNotlar,
         hak: hak
     });
+};
+// ===== DUYURULAR LİSTESİ: /duyurular =====
+exports.duyurular = (req, res) => {
+    res.render("duyurular", { title: "Duyurular", duyurular: yeniDuyurular() });
+};
+
+// ===== DUYURU DETAY: /duyuru/:slug =====
+exports.duyuruDetay = (req, res) => {
+    const duyuru = duyurular.find(d => d.slug === req.params.slug);
+    if (!duyuru) return bulunamadi(res);
+
+    // Kenar sütun için diğer duyurular (bu hariç, en yeni 3)
+    const digerleri = yeniDuyurular().filter(d => d.id !== duyuru.id).slice(0, 3);
+
+    res.render("duyuru", { title: duyuru.baslik, duyuru: duyuru, digerleri: digerleri });
 };

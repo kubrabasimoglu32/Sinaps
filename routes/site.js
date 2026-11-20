@@ -5,9 +5,10 @@ const siteController = require("../controllers/siteController");
 
 // Adres → Controller fonksiyonu
 router.get("/", siteController.anasayfa);
-router.get("/", siteController.anasayfa);
 router.get("/bolumler", siteController.bolumler);
 router.get("/bolum/:slug", siteController.bolumDetay);
 router.get("/ders/:slug", siteController.dersDetay);
 router.get("/not/:slug", siteController.notDetay);
+router.get("/duyurular", siteController.duyurular);
+router.get("/duyuru/:slug", siteController.duyuruDetay);
 module.exports = router;
