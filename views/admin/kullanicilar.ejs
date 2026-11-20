@@ -1,0 +1,110 @@
+<%- include("../partials/head") %>
+
+<div class="admin-duzen">
+    <%- include("partials/menu") %>
+
+    <main class="admin-icerik">
+        <h3 class="mb-1">Kullanıcılar</h3>
+        <p class="soluk mb-4">Kullanıcıların rollerini buradan değiştirebilirsin. Değişiklik, kullanıcı bir sonraki sayfayı açtığında geçerli olur.</p>
+
+        <!-- İşlem mesajı -->
+        <% if (mesaj) { %>
+            <div class="alert alert-<%= mesaj.tur %> py-2"><%= mesaj.metin %></div>
+        <% } %>
+
+        <!-- Özet kartları -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="sinaps-kart stat-kart">
+                    <span class="soluk">Toplam kullanıcı</span>
+                    <span class="stat-sayi"><%= sayilar.toplam %></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="sinaps-kart stat-kart">
+                    <span class="soluk">Moderatör</span>
+                    <span class="stat-sayi"><%= sayilar.moderator %></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="sinaps-kart stat-kart turuncu-serit">
+                    <span class="soluk">Admin</span>
+                    <span class="stat-sayi"><%= sayilar.admin %></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kullanıcı tablosu -->
+        <div class="sinaps-kart p-0">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Kullanıcı</th>
+                        <th>Seviye</th>
+                        <th>Katkı</th>
+                        <th>Rol</th>
+                        <th style="width: 260px;">Rolü değiştir</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% kullanicilar.forEach(k => { %>
+                        <% const benim = k.id === kullanici.id; %>
+                        <% const duzenlenebilir = !benim && !k.kurucu && (benKurucu || k.rol !== "admin"); %>
+                        <tr>
+                            <!-- 1. SÜTUN: Kullanıcı -->
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="avatar kucuk"><%= k.ad.charAt(0) %></div>
+                                    <div>
+                                        <strong style="color: var(--lacivert);"><%= k.ad %></strong>
+                                        <% if (benim) { %><span class="soluk">(sen)</span><% } %>
+                                        <% if (k.kurucu) { %><span class="rol-etiketi rol-admin ms-1">Kurucu</span><% } %>
+                                        <div class="soluk"><%= k.email %></div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- 2. SÜTUN: Seviye -->
+                            <td>
+                                <%= k.seviye %>
+                                <div class="soluk"><%= k.puan %> puan</div>
+                            </td>
+
+                            <!-- 3. SÜTUN: Katkı -->
+                            <td class="soluk"><%= k.notSayisi %> not · <%= k.cevapSayisi %> cevap</td>
+
+                            <!-- 4. SÜTUN: Rol -->
+                            <td><span class="rol-etiketi rol-<%= k.rol %>"><%= rolAdi[k.rol] %></span></td>
+
+                            <!-- 5. SÜTUN: Rolü değiştir -->
+                            <td>
+                                <% if (!duzenlenebilir) { %>
+                                    <span class="soluk">
+                                        <% if (benim) { %>Kendi rolünü değiştiremezsin
+                                        <% } else if (k.kurucu) { %>Kurucunun rolü değiştirilemez
+                                        <% } else { %>Sadece kurucu değiştirebilir<% } %>
+                                    </span>
+                                <% } else { %>
+                                    <form action="/admin/kullanicilar/<%= k.id %>/rol" method="POST" class="d-flex gap-2 m-0">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                        <select name="rol" class="form-select form-select-sm">
+                                            <% const secenekler = benKurucu ? ["ogrenci", "moderator", "admin"] : ["ogrenci", "moderator"]; %>
+                                            <% secenekler.forEach(r => { %>
+                                                <option value="<%= r %>" <%= k.rol === r ? "selected" : "" %>><%= rolAdi[r] %></option>
+                                            <% }) %>
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-outline-primary">Kaydet</button>
+                                    </form>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

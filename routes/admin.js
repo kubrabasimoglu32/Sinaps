@@ -1,10 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const moderasyonController = require("../controllers/moderasyonController");
+const kullaniciController = require("../controllers/kullaniciController");
 
 const { rolGerekli } = require("../middleware/yetki");
 const { bekleyenNotlar } = require("../data/dummy");
 const adminController = require("../controllers/adminController");
+
 
 // 1) Bu router'daki her sayfa için: sadece admin ve moderatör
 router.use(rolGerekli("admin", "moderator"));
@@ -38,4 +40,6 @@ router.post("/duyurular/yeni", sadeceAdmin, adminController.duyuruEkle);
 router.get("/duyurular/:id/duzenle", sadeceAdmin, adminController.duyuruDuzenleSayfasi);
 router.post("/duyurular/:id/duzenle", sadeceAdmin, adminController.duyuruGuncelle);
 router.post("/duyurular/:id/sil", sadeceAdmin, adminController.duyuruSil);
+router.get("/kullanicilar", sadeceAdmin, kullaniciController.liste);
+router.post("/kullanicilar/:id/rol", sadeceAdmin, kullaniciController.rolDegistir);
 module.exports = router;

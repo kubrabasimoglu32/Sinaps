@@ -70,7 +70,7 @@ const duyurular = [
 ];
 
 const kullanicilar = [
-    { id: 1, ad: "kubra",  email: "kubra@sinaps.com",  sifre: ornekSifre, rol: "admin",     puan: 340 },
+    { id: 1, ad: "kubra", email: "kubra@sinaps.com", sifre: ornekSifre, rol: "admin", puan: 340, kurucu: true },
     { id: 2, ad: "ahmet",  email: "ahmet@sinaps.com",  sifre: ornekSifre, rol: "moderator", puan: 215 },
     { id: 3, ad: "zeynep", email: "zeynep@sinaps.com", sifre: ornekSifre, rol: "ogrenci",   puan: 180 },
     { id: 4, ad: "mehmet", email: "mehmet@sinaps.com", sifre: ornekSifre, rol: "ogrenci",   puan: 95 },
