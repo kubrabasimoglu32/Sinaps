@@ -84,7 +84,7 @@
                 <div class="sinaps-kart turuncu-serit">
                     <% liderler.forEach((kisi, sira) => { %>
                         <div class="d-flex justify-content-between py-1 <%= sira >= 3 ? 'soluk' : '' %>">
-                            <span><%= sira + 1 %>. <%= kisi.ad %></span>
+                            <span><%= sira + 1 %>. <a href="/kullanici/<%= encodeURIComponent(kisi.ad) %>"><%= kisi.ad %></a></span>
                             <span class="<%= sira < 3 ? 'puan' : '' %>"><%= kisi.puan %> p</span>
                         </div>
                     <% }) %>

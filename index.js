@@ -19,33 +19,36 @@ app.use(session({
     cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 gün
 }));
 
-// ===== ZİYARETÇİ SAYACI VE ÇEVRİMİÇİ =====
+// ===== 3. ZİYARETÇİ SAYACI VE ÇEVRİMİÇİ =====
 const { sayacMiddleware } = require("./middleware/sayac");
 app.use(sayacMiddleware);
 
-// ===== 3. KULLANICI VE CSRF KODUNU SAYFALARA GÖNDER =====
+// ===== 4. KULLANICI VE CSRF KODUNU SAYFALARA GÖNDER =====
 app.use(require("./middleware/locals"));
 
-// ===== 4. CSRF KORUMASI (route'lardan ÖNCE olmalı!) =====
+// ===== 5. CSRF KORUMASI =====
 const { csrfKoruma } = require("./middleware/csrf");
 app.use(csrfKoruma);
 
-// ===== 5. ROUTES =====
+// ===== 6. ROUTES (yeni router eklerken HEP buraya ekle) =====
 const siteRouter = require("./routes/site");
 const authRouter = require("./routes/auth");
 const soruRouter = require("./routes/soru");
+const profilRouter = require("./routes/profil");
 const adminRouter = require("./routes/admin");
+
 app.use("/", siteRouter);
 app.use("/", authRouter);
 app.use("/", soruRouter);
+app.use("/", profilRouter);
 app.use("/admin", adminRouter);
 
-// ===== 6. 404 =====
+// ===== 7. 404 =====
 app.use((req, res) => {
     res.status(404).render("404", { title: "Sayfa bulunamadı" });
 });
 
-// ===== 7. HATA YAKALAYICI =====
+// ===== 8. HATA YAKALAYICI =====
 app.use((err, req, res, next) => {
     if (err.code === "EBADCSRFTOKEN") {
         return res.status(403).render("403", {

@@ -1,6 +1,7 @@
 const { notlar, bekleyenNotlar, dersler, kullanicilar, duyurular } = require("../data/dummy");
 const slugUret = require("../helpers/slug");
 const { istatistikGetir } = require("../middleware/sayac");
+const puanVer = require("../helpers/puan");
 
 // ===== YARDIMCILAR =====
 const dersBul = (id) => dersler.find(d => d.id === id);
@@ -16,7 +17,7 @@ const geriDon = (req, res) => res.redirect(req.get("Referer") || "/admin/notlar"
 exports.genelBakis = (req, res) => {
     // GEÇİCİ: Ziyaretçi sayacını yapınca gerçek sayılar gelecek
     const istatistik = istatistikGetir();
-    
+
     res.render("admin/panel", {
         title: "Genel bakış",
         aktif: "genel",
@@ -45,8 +46,7 @@ exports.notOnayla = (req, res) => {
     notlar.push(not);
 
     // 2) Ödül: yükleyene +20 puan
-    const kisi = kullanicilar.find(k => k.ad === not.yukleyen);
-    if (kisi) kisi.puan += 20;
+    puanVer(not.yukleyen, 20, `Notun onaylandı: ${not.baslik}`);
 
     geriDon(req, res);
 };
@@ -60,8 +60,7 @@ exports.notReddet = (req, res) => {
     const [not] = bekleyenNotlar.splice(sira, 1);
 
     // Ceza: yükleyenden -5 puan (puan sıfırın altına düşmesin)
-    const kisi = kullanicilar.find(k => k.ad === not.yukleyen);
-    if (kisi) kisi.puan = Math.max(0, kisi.puan - 5);
+    puanVer(not.yukleyen, -5, `Notun reddedildi: ${not.baslik}`);
 
     geriDon(req, res);
 };

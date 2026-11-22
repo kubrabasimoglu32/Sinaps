@@ -1,0 +1,173 @@
+<%- include("partials/head") %>
+<%- include("partials/navbar") %>
+
+<section class="sayfa-baslik">
+    <div class="container">
+        <nav class="breadcrumb"><a href="/">Ana Sayfa</a>&nbsp;›&nbsp;<%= kendisiMi ? "Profilim" : profil.ad %></nav>
+        <h2 class="mb-0"><%= kendisiMi ? "Profilim" : profil.ad + " adlı kullanıcının profili" %></h2>
+    </div>
+</section>
+
+<main class="container py-5">
+    <div class="row g-4">
+
+        <!-- ===== SOL: KİŞİ KARTI VE KATKILAR ===== -->
+        <div class="col-lg-4">
+
+            <div class="sinaps-kart text-center mb-3">
+                <div class="avatar buyuk"><%= profil.ad.charAt(0) %></div>
+                <h4 class="mb-0"><%= profil.ad %></h4>
+                <% if (profil.rol !== "Öğrenci") { %>
+                    <span class="etiket mt-1"><%= profil.rol %></span>
+                <% } %>
+                <p class="soluk mt-2 mb-0">
+                    <% if (profil.bolum) { %><%= profil.bolum.ad %><br><% } %>
+                    <%= profil.sinif %>
+                </p>
+                <% if (kendisiMi) { %><p class="soluk mb-0"><%= profil.email %></p><% } %>
+                <p class="soluk mb-3">
+                    Üye: <%= new Date(profil.kayitTarihi).toLocaleDateString("tr-TR", { month: "long", year: "numeric" }) %>
+                </p>
+
+                <!-- Seviye ve puan -->
+                <div class="d-flex justify-content-between align-items-center">
+                    <strong style="color: var(--lacivert);"><%= profil.seviye.ad %></strong>
+                    <span class="puan"><%= profil.puan %> puan</span>
+                </div>
+                <div class="ilerleme my-2">
+                    <div class="ilerleme-dolu" style="width: <%= profil.seviye.yuzde %>%;"></div>
+                </div>
+                <p class="soluk text-start mb-0">
+                    <% if (profil.seviye.sonraki) { %>
+                        <strong><%= profil.seviye.sonraki %></strong> seviyesine <%= profil.seviye.kalan %> puan kaldı
+                    <% } else { %>
+                        En üst seviyedesin! 🧠
+                    <% } %>
+                </p>
+
+                <% if (kendisiMi) { %>
+                    <a href="/profil/ayarlar" class="btn btn-outline-primary btn-sm w-100 mt-3">
+                        <i class="bi bi-gear"></i> Ayarlar
+                    </a>
+                <% } %>
+            </div>
+
+            <div class="sinaps-kart turuncu-serit">
+                <h6><%= kendisiMi ? "Katkıların" : "Katkıları" %></h6>
+                <div class="row text-center g-2">
+                    <div class="col-6"><span class="katki-sayi"><%= profil.katki.not %></span><span class="soluk">not</span></div>
+                    <div class="col-6"><span class="katki-sayi"><%= profil.katki.cevap %></span><span class="soluk">cevap</span></div>
+                    <div class="col-6"><span class="katki-sayi"><%= profil.katki.enIyiCevap %></span><span class="soluk">en iyi cevap</span></div>
+                    <div class="col-6"><span class="katki-sayi"><%= profil.katki.indirme %></span><span class="soluk">indirilme</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== SAĞ: SEKMELER ===== -->
+        <div class="col-lg-8">
+            <ul class="nav nav-tabs sinaps-sekmeler bg-white" role="tablist">
+                <% if (kendisiMi) { %>
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#sekme-puan" type="button">Puan geçmişi</button>
+                    </li>
+                <% } %>
+                <li class="nav-item">
+                    <button class="nav-link <%= kendisiMi ? '' : 'active' %>" data-bs-toggle="tab" data-bs-target="#sekme-notlar" type="button">
+                        Notlar (<%= profil.notlar.length %>)
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#sekme-sorular" type="button">
+                        Sorular (<%= profil.sorular.length %>)
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#sekme-cevaplar" type="button">
+                        Cevaplar (<%= profil.cevaplar.length %>)
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content pt-3">
+
+                <!-- PUAN GEÇMİŞİ (sadece kendisi) -->
+                <% if (kendisiMi) { %>
+                    <div class="tab-pane fade show active" id="sekme-puan">
+                        <% if (puanGecmisi.length === 0) { %>
+                            <div class="bos-durum"><p class="soluk mb-0">Henüz puan hareketin yok. İlk notunu yükle ya da bir soruya cevap yaz!</p></div>
+                        <% } else { %>
+                            <div class="sinaps-kart p-0">
+                                <% puanGecmisi.forEach(h => { %>
+                                    <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+                                        <div>
+                                            <%= h.aciklama %>
+                                            <div class="soluk"><%= h.tarih %></div>
+                                        </div>
+                                        <span class="<%= h.miktar > 0 ? 'puan-arti' : 'puan-eksi' %>">
+                                            <%= h.miktar > 0 ? "+" : "−" %><%= Math.abs(h.miktar) %>
+                                        </span>
+                                    </div>
+                                <% }) %>
+                            </div>
+                        <% } %>
+                    </div>
+                <% } %>
+
+                <!-- NOTLAR -->
+                <div class="tab-pane fade <%= kendisiMi ? '' : 'show active' %>" id="sekme-notlar">
+                    <% bekleyenNotlar.forEach(n => { %>
+                        <div class="sinaps-kart mb-2 d-flex justify-content-between align-items-center">
+                            <span><%= n.baslik %></span>
+                            <span class="bekliyor-etiketi">Onay bekliyor</span>
+                        </div>
+                    <% }) %>
+                    <% if (profil.notlar.length === 0 && bekleyenNotlar.length === 0) { %>
+                        <div class="bos-durum"><p class="soluk mb-0">Henüz not paylaşılmamış.</p></div>
+                    <% } %>
+                    <% profil.notlar.forEach(n => { %>
+                        <div class="sinaps-kart mb-2 d-flex justify-content-between align-items-center">
+                            <a href="/not/<%= n.slug %>"><%= n.baslik %></a>
+                            <span class="soluk"><%= n.indirme %> indirme</span>
+                        </div>
+                    <% }) %>
+                </div>
+
+                <!-- SORULAR -->
+                <div class="tab-pane fade" id="sekme-sorular">
+                    <% if (profil.sorular.length === 0) { %>
+                        <div class="bos-durum"><p class="soluk mb-0">Henüz soru sorulmamış.</p></div>
+                    <% } %>
+                    <% profil.sorular.forEach(s => { %>
+                        <div class="sinaps-kart mb-2 d-flex justify-content-between align-items-center">
+                            <a href="/soru/<%= s.slug %>"><%= s.baslik %></a>
+                            <% if (s.enIyiCevapId) { %><span class="en-iyi-etiket">Çözüldü</span><% } %>
+                        </div>
+                    <% }) %>
+                </div>
+
+                <!-- CEVAPLAR -->
+                <div class="tab-pane fade" id="sekme-cevaplar">
+                    <% if (profil.cevaplar.length === 0) { %>
+                        <div class="bos-durum"><p class="soluk mb-0">Henüz cevap yazılmamış.</p></div>
+                    <% } %>
+                    <% profil.cevaplar.forEach(c => { %>
+                        <% if (c.soru) { %>
+                            <div class="sinaps-kart mb-2 <%= c.enIyiMi ? 'yesil-serit' : '' %>">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <a href="/soru/<%= c.soru.slug %>#cevap-<%= c.id %>"><%= c.soru.baslik %></a>
+                                    <% if (c.enIyiMi) { %><span class="en-iyi-etiket">En iyi cevap</span><% } %>
+                                </div>
+                                <p class="soluk mb-0 mt-1">
+                                    <%= c.icerik.length > 120 ? c.icerik.slice(0, 120) + "..." : c.icerik %>
+                                </p>
+                            </div>
+                        <% } %>
+                    <% }) %>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+<%- include("partials/footer") %>

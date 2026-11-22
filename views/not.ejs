@@ -76,7 +76,7 @@
                 <div class="d-flex align-items-center gap-2">
                     <div class="avatar"><%= yukleyen.ad.charAt(0) %></div>
                     <div>
-                        <div class="fw-semibold" style="color: var(--lacivert);"><%= yukleyen.ad %></div>
+                        <a href="/kullanici/<%= encodeURIComponent(yukleyen.ad) %>" class="fw-semibold"><%= yukleyen.ad %></a>
                         <span class="soluk"><%= yukleyen.seviye %> · <%= yukleyen.puan %> puan</span>
                     </div>
                 </div>

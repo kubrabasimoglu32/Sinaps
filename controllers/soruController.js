@@ -108,7 +108,7 @@ exports.soruSor = (req, res) => {
     };
     sorular.push(yeniSoru);
 
-    puanVer(yeniSoru.soran, 1);  // Ödül: soru sormak +1
+    puanVer(yeniSoru.soran, 1, `Soru sordun: ${yeniSoru.baslik}`);  // Ödül: soru sormak +1
     res.redirect(`/soru/${yeniSoru.slug}`);
 };
 
@@ -130,7 +130,7 @@ exports.cevapYaz = (req, res) => {
     cevaplar.push(yeniCevap);
 
     // Ödül: cevap yazmak +5 (kendi sorusunu cevaplayan puan almaz)
-    if (yeniCevap.yazan !== soru.soran) puanVer(yeniCevap.yazan, 5);
+    if (yeniCevap.yazan !== soru.soran) puanVer(yeniCevap.yazan, 5, `Cevap yazdın: ${soru.baslik}`);
 
     res.redirect(`/soru/${soru.slug}#cevap-${yeniCevap.id}`);
 };
@@ -159,11 +159,11 @@ exports.enIyiSec = (req, res) => {
     // Daha önce başka bir cevap seçildiyse onun puanını geri al
     if (soru.enIyiCevapId) {
         const eskiCevap = cevaplar.find(c => c.id === soru.enIyiCevapId);
-        if (eskiCevap) puanVer(eskiCevap.yazan, -15);
+        if (eskiCevap) puanVer(cevap.yazan, -15, "En iyi cevabın moderasyon tarafından kaldırıldı");
     }
 
     soru.enIyiCevapId = cevap.id;
-    puanVer(cevap.yazan, 15);   // Ödül: en iyi cevap +15
+    puanVer(cevap.yazan, 15, `Cevabın en iyi seçildi: ${soru.baslik}`);   // Ödül: en iyi cevap +15
 
     res.redirect(`/soru/${soru.slug}`);
 };

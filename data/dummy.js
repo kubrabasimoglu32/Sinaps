@@ -77,7 +77,16 @@ const kullanicilar = [
     { id: 5, ad: "elif",   email: "elif@samsun.edu.tr",   sifre: ornekSifre, rol: "ogrenci",   puan: 60,  bolumId: 2, sinif: 3, kayitTarihi: "2026-11-08" },
     { id: 6, ad: "can",    email: "can@samsun.edu.tr",    sifre: ornekSifre, rol: "ogrenci",   puan: 20,  bolumId: 2, sinif: 0, kayitTarihi: "2026-11-10" }
 ];
-
+// Puan hareketleri: her puan değişikliği burada kayıt olarak durur
+// (Örnek kayıtlar; toplamları kullanıcıların puanıyla birebir tutmuyor)
+const puanHareketleri = [
+    { id: 1, kullaniciAd: "kubra", miktar: 20,  aciklama: "Notun onaylandı: Vize Özeti", tarih: "2026-11-15" },
+    { id: 2, kullaniciAd: "kubra", miktar: 5,   aciklama: "Cevap yazdın: Express'te middleware ne işe yarar?", tarih: "2026-11-15" },
+    { id: 3, kullaniciAd: "kubra", miktar: 5,   aciklama: "Cevap yazdın: Bağlı liste ile dizi farkı nedir?", tarih: "2026-11-16" },
+    { id: 4, kullaniciAd: "kubra", miktar: 15,  aciklama: "Cevabın en iyi seçildi: Bağlı liste ile dizi farkı nedir?", tarih: "2026-11-16" },
+    { id: 5, kullaniciAd: "ahmet", miktar: 20,  aciklama: "Notun onaylandı: Bağlı Listeler Ders Notu", tarih: "2026-11-10" },
+    { id: 6, kullaniciAd: "ahmet", miktar: -5,  aciklama: "Notun reddedildi: Ağaçlar taslağı", tarih: "2026-11-11" }
+];
 const sorular = [
     {
         id: 1, dersId: 1, baslik: "Bağlı liste ile dizi farkı nedir?", slug: "bagli-liste-ile-dizi-farki-nedir",
@@ -101,4 +110,4 @@ const cevaplar = [
     { id: 4, soruId: 2, yazan: "kubra", tarih: "2026-11-15", icerik: "Middleware, istek route'a ulaşmadan önce araya giren fonksiyondur. Giriş kontrolü, form verisini okuma gibi işleri yapar." }
 ];
 
-module.exports = { bolumler, dersler, notlar,bekleyenNotlar, duyurular, kullanicilar, sorular, cevaplar };
+module.exports = { bolumler, dersler, notlar,bekleyenNotlar, duyurular, kullanicilar, sorular, cevaplar, puanHareketleri };
