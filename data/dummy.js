@@ -70,12 +70,12 @@ const duyurular = [
 ];
 
 const kullanicilar = [
-    { id: 1, ad: "kubra", email: "kubra@sinaps.com", sifre: ornekSifre, rol: "admin", puan: 340, kurucu: true },
-    { id: 2, ad: "ahmet",  email: "ahmet@sinaps.com",  sifre: ornekSifre, rol: "moderator", puan: 215 },
-    { id: 3, ad: "zeynep", email: "zeynep@sinaps.com", sifre: ornekSifre, rol: "ogrenci",   puan: 180 },
-    { id: 4, ad: "mehmet", email: "mehmet@sinaps.com", sifre: ornekSifre, rol: "ogrenci",   puan: 95 },
-    { id: 5, ad: "elif",   email: "elif@sinaps.com",   sifre: ornekSifre, rol: "ogrenci",   puan: 60 },
-    { id: 6, ad: "can",    email: "can@sinaps.com",    sifre: ornekSifre, rol: "ogrenci",   puan: 20 }
+    { id: 1, ad: "kubra",  email: "kubra@samsun.edu.tr",  sifre: ornekSifre, rol: "admin",     puan: 340, bolumId: 2, sinif: 3, kayitTarihi: "2026-11-01", kurucu: true },
+    { id: 2, ad: "ahmet",  email: "ahmet@samsun.edu.tr",  sifre: ornekSifre, rol: "moderator", puan: 215, bolumId: 1, sinif: 4, kayitTarihi: "2026-11-02" },
+    { id: 3, ad: "zeynep", email: "zeynep@samsun.edu.tr", sifre: ornekSifre, rol: "ogrenci",   puan: 180, bolumId: 2, sinif: 2, kayitTarihi: "2026-11-03" },
+    { id: 4, ad: "mehmet", email: "mehmet@samsun.edu.tr", sifre: ornekSifre, rol: "ogrenci",   puan: 95,  bolumId: 1, sinif: 1, kayitTarihi: "2026-11-05" },
+    { id: 5, ad: "elif",   email: "elif@samsun.edu.tr",   sifre: ornekSifre, rol: "ogrenci",   puan: 60,  bolumId: 2, sinif: 3, kayitTarihi: "2026-11-08" },
+    { id: 6, ad: "can",    email: "can@samsun.edu.tr",    sifre: ornekSifre, rol: "ogrenci",   puan: 20,  bolumId: 2, sinif: 0, kayitTarihi: "2026-11-10" }
 ];
 
 const sorular = [
