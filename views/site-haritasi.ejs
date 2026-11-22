@@ -1,0 +1,80 @@
+<%- include("partials/head") %>
+<%- include("partials/navbar") %>
+
+<section class="sayfa-baslik">
+    <div class="container">
+        <nav class="breadcrumb"><a href="/">Ana Sayfa</a>&nbsp;›&nbsp;Site haritası</nav>
+        <h2 class="mb-0">Site haritası</h2>
+    </div>
+</section>
+
+<main class="container py-5">
+    <div class="row g-4">
+
+        <!-- ===== SOL: SAYFALAR, DUYURULAR, SORULAR ===== -->
+        <div class="col-lg-5">
+            <div class="sinaps-kart mb-4">
+                <h5><i class="bi bi-house"></i> Sayfalar</h5>
+                <ul class="harita-liste">
+                    <% sabitSayfalar.forEach(s => { %>
+                        <li><a href="<%= s.yol %>"><%= s.ad %></a></li>
+                    <% }) %>
+                </ul>
+            </div>
+
+            <div class="sinaps-kart mb-4">
+                <h5><i class="bi bi-megaphone"></i> Duyurular</h5>
+                <ul class="harita-liste">
+                    <% duyurular.forEach(d => { %>
+                        <li><a href="/duyuru/<%= d.slug %>"><%= d.baslik %></a></li>
+                    <% }) %>
+                </ul>
+            </div>
+
+            <div class="sinaps-kart">
+                <h5><i class="bi bi-chat-dots"></i> Sorular</h5>
+                <ul class="harita-liste">
+                    <% sorular.forEach(s => { %>
+                        <li><a href="/soru/<%= s.slug %>"><%= s.baslik %></a></li>
+                    <% }) %>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ===== SAĞ: BÖLÜM → DERS → NOT AĞACI ===== -->
+        <div class="col-lg-7">
+            <div class="sinaps-kart">
+                <h5><i class="bi bi-diagram-3"></i> Bölümler, dersler ve notlar</h5>
+                <ul class="harita-liste">
+                    <% agac.forEach(bolum => { %>
+                        <li>
+                            <a href="/bolum/<%= bolum.slug %>" class="fw-semibold"><%= bolum.ad %></a>
+                            <ul class="harita-liste">
+                                <% bolum.dersler.forEach(ders => { %>
+                                    <li>
+                                        <a href="/ders/<%= ders.slug %>"><%= ders.ad %></a>
+                                        <% if (ders.notlar.length > 0) { %>
+                                            <ul class="harita-liste">
+                                                <% ders.notlar.forEach(not => { %>
+                                                    <li><a href="/not/<%= not.slug %>" class="soluk"><%= not.baslik %></a></li>
+                                                <% }) %>
+                                            </ul>
+                                        <% } %>
+                                    </li>
+                                <% }) %>
+                            </ul>
+                        </li>
+                    <% }) %>
+                </ul>
+            </div>
+
+            <p class="soluk mt-3 mb-0">
+                <i class="bi bi-filetype-xml"></i>
+                Arama motorları için: <a href="/sitemap.xml" target="_blank">sitemap.xml</a>
+            </p>
+        </div>
+
+    </div>
+</main>
+
+<%- include("partials/footer") %>
