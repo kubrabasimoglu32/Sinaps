@@ -19,8 +19,14 @@
             <!-- Hocanın kriterleri: Ziyaretçi Sayacı ve Online Kullanıcı Sayısı -->
             <div class="col-md-4 mb-3">
                 <h6 class="text-white">İstatistikler</h6>
-                <p class="small mb-1"><i class="bi bi-eye"></i> Bugün 0 · Toplam 0 ziyaretçi</p>
-                <p class="small mb-0"><i class="bi bi-circle-fill text-success"></i> 0 çevrimiçi</p>
+                
+    <i class="bi bi-eye"></i>
+    Bugün <%= istatistik.bugun %> · Toplam <%= istatistik.toplam.toLocaleString("tr-TR") %> ziyaretçi
+</p>
+<p class="small mb-0">
+    <i class="bi bi-circle-fill text-success"></i>
+    <%= istatistik.cevrimici %> çevrimiçi (<%= istatistik.uyeCevrimici %> üye)
+</p>
             </div>
 
         </div>

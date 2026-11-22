@@ -19,6 +19,10 @@ app.use(session({
     cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 gün
 }));
 
+// ===== ZİYARETÇİ SAYACI VE ÇEVRİMİÇİ =====
+const { sayacMiddleware } = require("./middleware/sayac");
+app.use(sayacMiddleware);
+
 // ===== 3. KULLANICI VE CSRF KODUNU SAYFALARA GÖNDER =====
 app.use(require("./middleware/locals"));
 

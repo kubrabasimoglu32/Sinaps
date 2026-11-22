@@ -1,5 +1,6 @@
 const { notlar, bekleyenNotlar, dersler, kullanicilar, duyurular } = require("../data/dummy");
 const slugUret = require("../helpers/slug");
+const { istatistikGetir } = require("../middleware/sayac");
 
 // ===== YARDIMCILAR =====
 const dersBul = (id) => dersler.find(d => d.id === id);
@@ -14,13 +15,8 @@ const geriDon = (req, res) => res.redirect(req.get("Referer") || "/admin/notlar"
 // ===== GENEL BAKIŞ: /admin =====
 exports.genelBakis = (req, res) => {
     // GEÇİCİ: Ziyaretçi sayacını yapınca gerçek sayılar gelecek
-    const istatistik = {
-        bugun: 124,
-        toplam: 8430,
-        cevrimici: 12,
-        son7gun: [52, 68, 45, 90, 77, 110, 124]
-    };
-
+    const istatistik = istatistikGetir();
+    
     res.render("admin/panel", {
         title: "Genel bakış",
         aktif: "genel",
