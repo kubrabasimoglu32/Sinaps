@@ -1,0 +1,111 @@
+<%- include("partials/head") %>
+<%- include("partials/navbar") %>
+
+<section class="sayfa-baslik">
+    <div class="container">
+        <nav class="breadcrumb"><a href="/">Ana Sayfa</a>&nbsp;›&nbsp;<a href="/profil">Profilim</a>&nbsp;›&nbsp;Ayarlar</nav>
+        <h2 class="mb-0">Ayarlar</h2>
+    </div>
+</section>
+
+<main class="container py-5">
+    <% if (mesaj) { %>
+        <div class="alert alert-<%= mesaj.tur %> py-2"><%= mesaj.metin %></div>
+    <% } %>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+
+            <div class="sinaps-kart mb-4">
+                <h5 class="mb-3">Profil fotoğrafı</h5>
+                <div class="d-flex align-items-center gap-3">
+                    <div id="fotoAlani">
+                        <%- include("partials/avatar", { ad: ben.ad, foto: ben.profilFoto, boyut: "buyuk" }) %>
+                    </div>
+
+                    <form action="/profil/ayarlar/foto?_csrf=<%= csrfToken %>" method="POST" enctype="multipart/form-data" class="flex-grow-1">
+                        <input type="file" name="foto" id="fotoSec" class="form-control form-control-sm mb-2" accept="image/jpeg,image/png" required>
+                        <div class="form-text mb-2">JPG veya PNG, en fazla 2 MB</div>
+                        <button type="submit" class="btn btn-turuncu btn-sm">Yükle</button>
+                    </form>
+                </div>
+
+                <% if (ben.profilFoto) { %>
+                    <form action="/profil/ayarlar/foto/kaldir" method="POST" class="mt-2"
+                          onsubmit="return confirm('Profil fotoğrafın kaldırılsın mı?')">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <button type="submit" class="btn btn-link text-danger btn-sm p-0">Fotoğrafı kaldır</button>
+                    </form>
+                <% } %>
+            </div>
+
+            <div class="sinaps-kart">
+                <h5 class="mb-3">Okul bilgileri</h5>
+                <div class="mb-3">
+                    <label class="form-label">E-posta</label>
+                    <input type="email" class="form-control" value="<%= ben.email %>" disabled>
+                    <div class="form-text">Öğrenci e-postası değiştirilemez.</div>
+                </div>
+                <form action="/profil/ayarlar/bilgiler" method="POST">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-7">
+                            <label class="form-label">Bölüm</label>
+                            <select name="bolum" class="form-select" required>
+                                <% bolumler.forEach(b => { %>
+                                    <option value="<%= b.id %>" <%= ben.bolumId === b.id ? "selected" : "" %>><%= b.ad %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                        <div class="col-sm-5">
+                            <label class="form-label">Sınıf</label>
+                            <select name="sinif" class="form-select" required>
+                                <% siniflar.forEach(s => { %>
+                                    <option value="<%= s.deger %>" <%= ben.sinif === s.deger ? "selected" : "" %>><%= s.ad %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-turuncu btn-sm">Kaydet</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="sinaps-kart">
+                <h5 class="mb-3">Şifre değiştir</h5>
+                <form action="/profil/ayarlar/sifre" method="POST">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <div class="mb-3">
+                        <label class="form-label">Mevcut şifre</label>
+                        <input type="password" name="mevcutSifre" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Yeni şifre</label>
+                        <input type="password" name="yeniSifre" class="form-control" minlength="6" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Yeni şifre tekrar</label>
+                        <input type="password" name="yeniSifreTekrar" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-turuncu">Şifreyi değiştir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    document.getElementById("fotoSec").addEventListener("change", (e) => {
+        const dosya = e.target.files[0];
+        if (!dosya) return;
+        const alan = document.getElementById("fotoAlani");
+        alan.innerHTML = "";
+        const resim = document.createElement("img");
+        resim.src = URL.createObjectURL(dosya);
+        resim.className = "avatar buyuk";
+        alan.appendChild(resim);
+    });
+</script>
+
+<%- include("partials/footer") %>

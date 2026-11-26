@@ -18,6 +18,7 @@ const profilGoster = (res, kisi, kendisiMi) => {
 
     const profil = {
         ad: kisi.ad,
+        profilFoto: kisi.profilFoto || null,
         email: kisi.email,
         rol: rolAdi[kisi.rol],
         puan: kisi.puan,

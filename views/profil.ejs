@@ -15,7 +15,7 @@
         <div class="col-lg-4">
 
             <div class="sinaps-kart text-center mb-3">
-                <div class="avatar buyuk"><%= profil.ad.charAt(0) %></div>
+                <%- include("partials/avatar", { ad: profil.ad, foto: profil.profilFoto, boyut: "buyuk" }) %>
                 <h4 class="mb-0"><%= profil.ad %></h4>
                 <% if (profil.rol !== "Öğrenci") { %>
                     <span class="etiket mt-1"><%= profil.rol %></span>

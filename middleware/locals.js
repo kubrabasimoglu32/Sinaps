@@ -9,7 +9,8 @@ module.exports = (req, res, next) => {
         const guncel = kullanicilar.find(k => k.id === req.session.kullanici.id);
 
         if (guncel) {
-            req.session.kullanici.rol = guncel.rol;   // rol değiştiyse hemen geçerli olsun
+            req.session.kullanici.rol = guncel.rol; 
+            req.session.kullanici.profilFoto = guncel.profilFoto || null;  // rol değiştiyse hemen geçerli olsun
         } else {
             delete req.session.kullanici;              // kullanıcı artık yoksa oturumu kapat
         }

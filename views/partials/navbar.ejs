@@ -28,7 +28,7 @@
                      <a href="/admin" class="btn btn-sm btn-light"><i class="bi bi-speedometer2"></i> Panel</a>
                      <% } %>
                     <a href="/profil" class="d-flex align-items-center gap-2 text-white text-decoration-none small me-2">
-    <span class="avatar kucuk"><%= kullanici.ad.charAt(0) %></span>
+        <%- include("avatar", { ad: kullanici.ad, foto: kullanici.profilFoto, boyut: "kucuk" }) %>
     <%= kullanici.ad %>
 </a>
                     <form action="/cikis" method="POST" class="m-0">

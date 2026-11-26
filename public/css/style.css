@@ -341,3 +341,5 @@ h1, h2, h3, h4, h5, h6 { color: var(--lacivert); }
     padding: 3px 9px;
     border-radius: 4px;
 }
+img.avatar { object-fit: cover; }
+.avatar.buyuk { display: flex; }
