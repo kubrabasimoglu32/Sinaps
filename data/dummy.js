@@ -109,5 +109,10 @@ const cevaplar = [
     { id: 3, soruId: 1, yazan: "zeynep", tarih: "2026-11-17", icerik: "Sık rastgele erişim gerekiyorsa dizi, sık ekleme-silme varsa bağlı liste daha uygun." },
     { id: 4, soruId: 2, yazan: "kubra", tarih: "2026-11-15", icerik: "Middleware, istek route'a ulaşmadan önce araya giren fonksiyondur. Giriş kontrolü, form verisini okuma gibi işleri yapar." }
 ];
-
-module.exports = { bolumler, dersler, notlar,bekleyenNotlar, duyurular, kullanicilar, sorular, cevaplar, puanHareketleri };
+const afisler = [
+    { id: 1, baslik: "Yapay Zeka Söyleşisi", tur: "Söyleşi", tarih: "2026-12-03", dosya: null, aciklama: "Bir yapay zeka mühendisiyle soru-cevap.", ekleyen: "kubra" },
+    { id: 2, baslik: "Bahar Kodlama Yarışması", tur: "Yarışma", tarih: "2027-03-18", dosya: null, aciklama: "Takımlar 24 saat içinde bir proje geliştirecek.", ekleyen: "kubra" },
+    { id: 3, baslik: "Açık Kaynak Günü", tur: "Etkinlik", tarih: "2026-12-10", dosya: null, aciklama: "Açık kaynak projelerini tanıtma buluşması.", ekleyen: "ahmet" },
+    { id: 4, baslik: "Kampüs Tiyatro Gösterisi", tur: "Tiyatro", tarih: "2027-01-15", dosya: null, aciklama: "Öğrenci topluluğunun hazırladığı oyun.", ekleyen: "kubra" }
+];
+module.exports = { bolumler, dersler, notlar,bekleyenNotlar, duyurular, kullanicilar, sorular, cevaplar, puanHareketleri, afisler };

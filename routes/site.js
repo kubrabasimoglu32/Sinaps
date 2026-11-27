@@ -1,5 +1,7 @@
 const express = require("express");
+const galeriController = require("../controllers/galeriController");
 const router = express.Router();
+
 
 const siteController = require("../controllers/siteController");
 const haritaController = require("../controllers/haritaController");
@@ -15,4 +17,5 @@ router.get("/duyuru/:slug", siteController.duyuruDetay);
 router.get("/site-haritasi", haritaController.sayfa);
 router.get("/sitemap.xml", haritaController.xml);
 router.get("/robots.txt", haritaController.robots);
+router.get("/galeri", galeriController.liste);
 module.exports = router;

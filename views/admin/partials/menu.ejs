@@ -16,7 +16,7 @@
     <!-- Sadece admin -->
     <% if (kullanici.rol === "admin") { %>
         <div class="menu-ayrac">SADECE ADMİN</div>
-        <a href="/admin/duyurular" class="menu-ogesi <%= aktif === 'duyurular' ? 'aktif' : '' %>">
+        <a href="/admin/duyurular" class="menu-ogesi <%= aktif === 'duyurular' ? 'aktif' : '' %>"><a href="/admin/galeri">Galeri</a>
             <i class="bi bi-megaphone"></i> Duyurular
         </a>
         <a href="/admin/galeri" class="menu-ogesi <%= aktif === 'galeri' ? 'aktif' : '' %>">

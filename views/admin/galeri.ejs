@@ -1,0 +1,52 @@
+<%- include("../partials/head") %>
+<%- include("../partials/navbar") %>
+
+<div class="admin-duzen">
+    <%- include("partials/menu") %>
+
+    <div class="admin-icerik">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0">Galeri afişleri</h4>
+            <a href="/admin/galeri/ekle" class="btn btn-turuncu btn-sm">Yeni afiş</a>
+        </div>
+
+        <% if (mesaj) { %>
+            <div class="alert alert-<%= mesaj.tur %> py-2"><%= mesaj.metin %></div>
+        <% } %>
+
+        <div class="sinaps-kart p-0 overflow-auto">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Afiş</th>
+                        <th>Tür</th>
+                        <th>Tarih</th>
+                        <th>Ekleyen</th>
+                        <th class="text-end">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% afisler.forEach(a => { %>
+                        <tr>
+                            <td><%= a.baslik %></td>
+                            <td><span class="etiket"><%= a.tur %></span></td>
+                            <td><%= new Date(a.tarih).toLocaleDateString("tr-TR") %></td>
+                            <td><%= a.ekleyen %></td>
+                            <td class="text-end">
+                                <a href="/admin/galeri/<%= a.id %>/duzenle" class="btn btn-sm btn-outline-secondary">Düzenle</a>
+                                <% if (kullanici.rol === "admin") { %>
+                                    <form action="/admin/galeri/<%= a.id %>/sil?_csrf=<%= csrfToken %>" method="POST" class="d-inline"
+                                          onsubmit="return confirm('Bu afiş silinsin mi?')">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Sil</button>
+                                    </form>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<%- include("../partials/footer") %>

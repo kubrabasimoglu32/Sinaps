@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const moderasyonController = require("../controllers/moderasyonController");
 const kullaniciController = require("../controllers/kullaniciController");
+const { resimYukleyici } = require("../middleware/yukleme");
+const galeriAdmin = require("../controllers/adminGaleriController");
 
 const { rolGerekli } = require("../middleware/yetki");
 const { bekleyenNotlar } = require("../data/dummy");
@@ -22,6 +24,12 @@ router.get("/", adminController.genelBakis);
 router.get("/notlar", adminController.notOnaylari);
 router.post("/notlar/:id/onayla", adminController.notOnayla);
 router.post("/notlar/:id/reddet", adminController.notReddet);
+router.get("/galeri", galeriAdmin.liste);
+router.get("/galeri/ekle", galeriAdmin.yeniFormu);
+router.post("/galeri/ekle", resimYukleyici("galeri", "afis"), galeriAdmin.ekle);
+router.get("/galeri/:id/duzenle", galeriAdmin.duzenleFormu);
+router.post("/galeri/:id/duzenle", resimYukleyici("galeri", "afis"), galeriAdmin.guncelle);
+
 
 // Soru ve cevap moderasyonu (admin ve moderatör)
 
@@ -29,6 +37,7 @@ router.get("/sorular", moderasyonController.soruListesi);
 router.get("/sorular/:id", moderasyonController.soruDetay);
 router.post("/sorular/:id/sil", moderasyonController.soruSil);
 router.post("/cevaplar/:id/sil", moderasyonController.cevapSil);
+
 
 // ===== SADECE ADMİN =====
 
@@ -42,4 +51,6 @@ router.post("/duyurular/:id/duzenle", sadeceAdmin, adminController.duyuruGuncell
 router.post("/duyurular/:id/sil", sadeceAdmin, adminController.duyuruSil);
 router.get("/kullanicilar", sadeceAdmin, kullaniciController.liste);
 router.post("/kullanicilar/:id/rol", sadeceAdmin, kullaniciController.rolDegistir);
+router.post("/galeri/:id/sil", sadeceAdmin, galeriAdmin.sil);
+
 module.exports = router;

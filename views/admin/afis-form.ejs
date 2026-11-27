@@ -1,0 +1,61 @@
+<%- include("../partials/head") %>
+<%- include("../partials/navbar") %>
+
+<div class="admin-duzen">
+    <%- include("partials/menu") %>
+
+    <div class="admin-icerik">
+        <h4 class="mb-3"><%= title %></h4>
+
+        <% if (mesaj) { %>
+            <div class="alert alert-<%= mesaj.tur %> py-2"><%= mesaj.metin %></div>
+        <% } %>
+
+        <div class="sinaps-kart" style="max-width: 640px;">
+            <form action="<%= action %>?_csrf=<%= csrfToken %>" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label class="form-label">Başlık</label>
+                    <input type="text" name="baslik" class="form-control" value="<%= afis ? afis.baslik : '' %>" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Tür</label>
+                    <input type="text" name="tur" list="tur-listesi" class="form-control"
+                           value="<%= afis ? afis.tur : '' %>" placeholder="Söyleşi, Yarışma, Tiyatro..." required>
+                    <datalist id="tur-listesi">
+                        <% turler.forEach(t => { %>
+                            <option value="<%= t %>">
+                        <% }) %>
+                    </datalist>
+                    <div class="form-text">Listeden seçebilir ya da yeni bir tür yazabilirsin.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Tarih</label>
+                    <input type="date" name="tarih" class="form-control" value="<%= afis ? afis.tarih : '' %>" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Açıklama</label>
+                    <textarea name="aciklama" class="form-control" rows="3"><%= afis ? afis.aciklama : '' %></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Afiş resmi</label>
+                    <% if (afis && afis.dosya) { %>
+                        <div class="mb-2"><img src="<%= afis.dosya %>" alt="" style="max-height: 120px;" class="rounded"></div>
+                    <% } %>
+                    <input type="file" name="afis" class="form-control" accept="image/jpeg,image/png" <%= afis ? '' : 'required' %>>
+                    <div class="form-text">
+                        <%= afis ? "Yeni resim seçersen eskisi silinir, seçmezsen aynı kalır." : "JPG veya PNG, en fazla 2 MB." %>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-turuncu">Kaydet</button>
+                <a href="/admin/galeri" class="btn btn-link">Vazgeç</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include("../partials/footer") %>

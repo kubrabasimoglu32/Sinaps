@@ -1,0 +1,45 @@
+<%- include("partials/head") %>
+<%- include("partials/navbar") %>
+
+<section class="sayfa-baslik">
+    <div class="container">
+        <nav class="breadcrumb"><a href="/">Ana Sayfa</a>&nbsp;›&nbsp;Galeri</nav>
+        <h2 class="mb-1">Galeri</h2>
+        <p class="soluk mb-0">Topluluk etkinliklerinin söyleşi, yarışma ve etkinlik afişleri.</p>
+    </div>
+</section>
+
+<main class="container py-5">
+    <div class="d-flex gap-2 flex-wrap mb-4">
+        <a href="/galeri" class="btn btn-sm <%= !secili ? 'btn-turuncu' : 'btn-outline-secondary' %>">Tümü</a>
+        <% turler.forEach(t => { %>
+            <a href="/galeri?tur=<%= tureGoreSlug(t) %>" class="btn btn-sm <%= secili === t ? 'btn-turuncu' : 'btn-outline-secondary' %>"><%= t %></a>
+        <% }) %>
+    </div>
+
+    <% if (afisler.length === 0) { %>
+        <div class="bos-durum">Bu türde henüz afiş yok.</div>
+    <% } else { %>
+        <div class="row g-4">
+            <% afisler.forEach(a => { %>
+                <div class="col-sm-6 col-lg-4">
+                    <div class="sinaps-kart p-0 overflow-hidden h-100">
+                        <% if (a.dosya) { %>
+                            <div class="afis-yer"><img src="<%= a.dosya %>" alt="<%= a.baslik %>"></div>
+                        <% } else { %>
+                            <div class="afis-yer"><i class="bi bi-image" aria-hidden="true"></i></div>
+                        <% } %>
+                        <div class="p-3">
+                            <span class="etiket"><%= a.tur %></span>
+                            <h5 class="mt-2 mb-1"><%= a.baslik %></h5>
+                            <p class="soluk small mb-1"><%= new Date(a.tarih).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" }) %></p>
+                            <p class="mb-0"><%= a.aciklama %></p>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    <% } %>
+</main>
+
+<%- include("partials/footer") %>
