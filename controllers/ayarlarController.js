@@ -1,7 +1,8 @@
 const bcrypt = require("bcryptjs");
 const fs = require("fs");
 const path = require("path");
-const { kullanicilar, bolumler } = require("../data/dummy");
+const Kullanici = require("../models/Kullanici");
+const { bolumler } = require("../data/dummy");     // bölüm listesi henüz dummy'de, sonra veritabanına geçecek
 const { SINIFLAR } = require("../helpers/sinif");
 
 const MESAJLAR = {
@@ -22,74 +23,103 @@ const MESAJLAR = {
 
 const geriDon = (res, durum) => res.redirect(`/profil/ayarlar?durum=${durum}`);
 
-const benimKaydim = (req) => kullanicilar.find(k => k.id === req.session.kullanici.id);
-
+// "/static/uploads/profil/123.jpg" dosyasını diskten siler
 const dosyaSil = (adres) => {
     if (!adres) return;
     const dosyaYolu = path.join(__dirname, "..", "public", adres.replace("/static/", ""));
-    fs.unlink(dosyaYolu, () => {});
+    fs.unlink(dosyaYolu, () => {});   // dosya zaten yoksa hatayı görmezden gel
 };
 
 // GET /profil/ayarlar
-exports.sayfa = (req, res) => {
-    const ben = benimKaydim(req);
-    res.render("ayarlar", {
-        title: "Ayarlar",
-        ben: { ad: ben.ad, email: ben.email, bolumId: ben.bolumId, sinif: ben.sinif, profilFoto: ben.profilFoto || null },
-        bolumler: bolumler,
-        siniflar: SINIFLAR,
-        mesaj: MESAJLAR[req.query.durum] || null
-    });
+exports.sayfa = async (req, res, next) => {
+    try {
+        const ben = await Kullanici.findByPk(req.session.kullanici.id);
+        res.render("ayarlar", {
+            title: "Ayarlar",
+            ben: {
+                ad: ben.ad,
+                email: ben.email,
+                bolumId: ben.bolumId,
+                sinif: ben.sinif,
+                profilFoto: ben.profilFoto || null
+            },
+            bolumler: bolumler,
+            siniflar: SINIFLAR,
+            mesaj: MESAJLAR[req.query.durum] || null
+        });
+    } catch (err) {
+        next(err);
+    }
 };
 
 // POST /profil/ayarlar/bilgiler
-exports.bilgiGuncelle = (req, res) => {
-    const bolumId = Number(req.body.bolum);
-    const sinif = Number(req.body.sinif);
+exports.bilgiGuncelle = async (req, res, next) => {
+    try {
+        const bolumId = Number(req.body.bolum);
+        const sinif = Number(req.body.sinif);
 
-    if (!bolumler.some(b => b.id === bolumId) || !SINIFLAR.some(s => s.deger === sinif)) {
-        return geriDon(res, "bilgiHata");
+        if (!bolumler.some(b => b.id === bolumId) || !SINIFLAR.some(s => s.deger === sinif)) {
+            return geriDon(res, "bilgiHata");
+        }
+
+        await Kullanici.update(
+            { bolumId: bolumId, sinif: sinif },
+            { where: { id: req.session.kullanici.id } }
+        );
+        geriDon(res, "bilgi");
+    } catch (err) {
+        next(err);
     }
-
-    const ben = benimKaydim(req);
-    ben.bolumId = bolumId;
-    ben.sinif = sinif;
-    geriDon(res, "bilgi");
 };
 
 // POST /profil/ayarlar/sifre
-exports.sifreDegistir = async (req, res) => {
-    const mevcut = req.body.mevcutSifre || "";
-    const yeni = req.body.yeniSifre || "";
-    const yeniTekrar = req.body.yeniSifreTekrar || "";
-    const ben = benimKaydim(req);
+exports.sifreDegistir = async (req, res, next) => {
+    try {
+        const mevcut = req.body.mevcutSifre || "";
+        const yeni = req.body.yeniSifre || "";
+        const yeniTekrar = req.body.yeniSifreTekrar || "";
+        const ben = await Kullanici.findByPk(req.session.kullanici.id);
 
-    if (!(await bcrypt.compare(mevcut, ben.sifre))) return geriDon(res, "sifreYanlis");
-    if (yeni.length < 6) return geriDon(res, "sifreKisa");
-    if (yeni !== yeniTekrar) return geriDon(res, "sifreUyusmuyor");
-    if (await bcrypt.compare(yeni, ben.sifre)) return geriDon(res, "sifreAyni");
+        if (!(await bcrypt.compare(mevcut, ben.sifre))) return geriDon(res, "sifreYanlis");
+        if (yeni.length < 6) return geriDon(res, "sifreKisa");
+        if (yeni !== yeniTekrar) return geriDon(res, "sifreUyusmuyor");
+        if (await bcrypt.compare(yeni, ben.sifre)) return geriDon(res, "sifreAyni");
 
-    ben.sifre = await bcrypt.hash(yeni, 10);
-    geriDon(res, "sifre");
+        ben.sifre = await bcrypt.hash(yeni, 10);
+        await ben.save();
+        geriDon(res, "sifre");
+    } catch (err) {
+        next(err);
+    }
 };
 
 // POST /profil/ayarlar/foto  (önce resimYukleyici çalışır)
-exports.fotoYukle = (req, res) => {
-    if (req.yuklemeHatasi === "tur") return geriDon(res, "fotoTur");
-    if (req.yuklemeHatasi === "boyut") return geriDon(res, "fotoBoyut");
-    if (req.yuklemeHatasi) return geriDon(res, "fotoHata");
-    if (!req.file) return geriDon(res, "fotoYok");
+exports.fotoYukle = async (req, res, next) => {
+    try {
+        if (req.yuklemeHatasi === "tur") return geriDon(res, "fotoTur");
+        if (req.yuklemeHatasi === "boyut") return geriDon(res, "fotoBoyut");
+        if (req.yuklemeHatasi) return geriDon(res, "fotoHata");
+        if (!req.file) return geriDon(res, "fotoYok");
 
-    const ben = benimKaydim(req);
-    dosyaSil(ben.profilFoto);
-    ben.profilFoto = `/static/uploads/profil/${req.file.filename}`;
-    geriDon(res, "foto");
+        const ben = await Kullanici.findByPk(req.session.kullanici.id);
+        dosyaSil(ben.profilFoto);   // eski fotoğrafı diskten sil
+        ben.profilFoto = `/static/uploads/profil/${req.file.filename}`;
+        await ben.save();
+        geriDon(res, "foto");
+    } catch (err) {
+        next(err);
+    }
 };
 
 // POST /profil/ayarlar/foto/kaldir
-exports.fotoKaldir = (req, res) => {
-    const ben = benimKaydim(req);
-    dosyaSil(ben.profilFoto);
-    ben.profilFoto = null;
-    geriDon(res, "fotoKaldirildi");
+exports.fotoKaldir = async (req, res, next) => {
+    try {
+        const ben = await Kullanici.findByPk(req.session.kullanici.id);
+        dosyaSil(ben.profilFoto);
+        ben.profilFoto = null;
+        await ben.save();
+        geriDon(res, "fotoKaldirildi");
+    } catch (err) {
+        next(err);
+    }
 };

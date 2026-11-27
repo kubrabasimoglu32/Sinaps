@@ -1,7 +1,18 @@
 const express = require("express");
 const path = require("path");
 const session = require("express-session");
+const { baglantiTest } = require("./config/database");
+baglantiTest();
+const { sequelize } = require("./config/database");
+require("./models/Kullanici");
 
+const baslangicVerisiEkle = require("./models/seed");
+
+sequelize.sync()
+    .then(() => baslangicVerisiEkle())
+    .then(() => console.log("Tablolar hazır."))
+    .catch((err) => console.error("Tablo hatası:", err.message));
+    
 const app = express();
 
 // ===== AYARLAR =====
