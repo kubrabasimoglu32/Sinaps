@@ -1,5 +1,5 @@
-const { bolumler, dersler, notlar, duyurular } = require("../data/dummy");
-const { Soru } = require("../models/iliskiler");
+const { notlar, duyurular } = require("../data/dummy");
+const { Soru, Bolum, Ders } = require("../models/iliskiler");
 
 // Sabit sayfalar (xml: false olanlar arama motorlarına bildirilmez)
 // Galeri modülü eklenince buraya da eklenecek
@@ -19,6 +19,9 @@ const siteAdresi = (req) => `${req.protocol}://${req.get("host")}`;
 // ===== SİTE HARİTASI SAYFASI: /site-haritasi =====
 exports.sayfa = async (req, res, next) => {
     try {
+    const bolumler = await Bolum.findAll({ order: [["id", "ASC"]], raw: true });
+    const dersler = await Ders.findAll({ order: [["id", "ASC"]], raw: true });
+
     // Bölüm → ders → not ağacı
     const agac = bolumler.map(bolum => ({
         ...bolum,
@@ -44,6 +47,8 @@ exports.xml = async (req, res, next) => {
     try {
     const site = siteAdresi(req);
     const sorular = await Soru.findAll({ attributes: ["slug", "tarih"] });
+    const bolumler = await Bolum.findAll({ attributes: ["slug"], raw: true });
+    const dersler = await Ders.findAll({ attributes: ["slug"], raw: true });
 
     // Sitedeki bütün herkese açık adresler
     const adresler = [

@@ -1,5 +1,4 @@
-const { Soru, Cevap, Kullanici } = require("../models/iliskiler");
-const { dersler } = require("../data/dummy");
+const { Soru, Cevap, Kullanici, Ders } = require("../models/iliskiler");
 
 // Veritabanındaki soruları; soran kişinin adı, ders bilgisi ve cevap sayısıyla birlikte verir
 //   kosul: hangi sorular (ör. { dersId: 2 }), limit: en fazla kaç soru
@@ -8,7 +7,8 @@ const soruOzetleri = async (kosul = {}, limit) => {
         where: kosul,
         include: [
             { model: Kullanici, attributes: ["ad"] },
-            { model: Cevap, attributes: ["id"] }
+            { model: Cevap, attributes: ["id"] },
+            { model: Ders, as: "ders", attributes: ["id", "ad", "slug", "bolumId"] }
         ],
         order: [["tarih", "DESC"], ["id", "DESC"]]
     });
@@ -22,7 +22,7 @@ const soruOzetleri = async (kosul = {}, limit) => {
         dersId: s.dersId,
         enIyiCevapId: s.enIyiCevapId,
         soran: s.Kullanici ? s.Kullanici.ad : "",
-        ders: dersler.find(d => d.id === s.dersId),
+        ders: s.ders ? s.ders.get({ plain: true }) : null,
         cevapSayisi: s.Cevaps.length
     }));
 

@@ -1,38 +1,45 @@
-const { notlar, bekleyenNotlar, dersler, kullanicilar, duyurular } = require("../data/dummy");
+const { notlar, bekleyenNotlar, duyurular } = require("../data/dummy");
+const { Ders } = require("../models/iliskiler");
 const slugUret = require("../helpers/slug");
 const { istatistikGetir } = require("../middleware/sayac");
 const { puanVer } = require("../helpers/puan");
 
 // ===== YARDIMCILAR =====
-const dersBul = (id) => dersler.find(d => d.id === id);
-
-// Bekleyen notlara ders bilgisini ekler
-const bekleyenListesi = () => bekleyenNotlar.map(n => ({ ...n, ders: dersBul(n.dersId) }));
+// Bekleyen notlara ders bilgisini ekler (dersler veritabanından)
+const bekleyenListesi = async () => {
+    const dersler = await Ders.findAll({ raw: true });
+    return bekleyenNotlar.map(n => ({ ...n, ders: dersler.find(d => d.id === n.dersId) }));
+};
 
 // İşlemden sonra kullanıcıyı geldiği sayfaya geri gönderir
 const geriDon = (req, res) => res.redirect(req.get("Referer") || "/admin/notlar");
 
 
 // ===== GENEL BAKIŞ: /admin =====
-exports.genelBakis = (req, res) => {
-    // GEÇİCİ: Ziyaretçi sayacını yapınca gerçek sayılar gelecek
-    const istatistik = istatistikGetir();
-
-    res.render("admin/panel", {
-        title: "Genel bakış",
-        aktif: "genel",
-        istatistik: istatistik,
-        bekleyenler: bekleyenListesi()
-    });
+exports.genelBakis = async (req, res, next) => {
+    try {
+        res.render("admin/panel", {
+            title: "Genel bakış",
+            aktif: "genel",
+            istatistik: istatistikGetir(),
+            bekleyenler: await bekleyenListesi()
+        });
+    } catch (err) {
+        next(err);
+    }
 };
 
 // ===== NOT ONAYLARI: /admin/notlar =====
-exports.notOnaylari = (req, res) => {
-    res.render("admin/notlar", {
-        title: "Not onayları",
-        aktif: "notlar",
-        bekleyenler: bekleyenListesi()
-    });
+exports.notOnaylari = async (req, res, next) => {
+    try {
+        res.render("admin/notlar", {
+            title: "Not onayları",
+            aktif: "notlar",
+            bekleyenler: await bekleyenListesi()
+        });
+    } catch (err) {
+        next(err);
+    }
 };
 
 // ===== NOTU ONAYLA: POST /admin/notlar/:id/onayla =====

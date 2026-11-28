@@ -1,5 +1,5 @@
-const { bolumler, dersler, notlar, duyurular } = require("../data/dummy");
-const { Kullanici, Soru } = require("../models/iliskiler");
+const { notlar, duyurular } = require("../data/dummy");
+const { Kullanici, Soru, Bolum, Ders } = require("../models/iliskiler");
 const { soruOzetleri } = require("../helpers/soruListesi");
 const seviyeBul = require("../helpers/seviye");
 
@@ -7,11 +7,15 @@ const seviyeBul = require("../helpers/seviye");
 // YARDIMCI FONKSİYONLAR (her zaman en üstte dursun)
 // ===================================================
 
-// id'si verilen dersi bulur
-const dersBul = (id) => dersler.find(d => d.id === id);
+// Bölümleri ve dersleri veritabanından düz nesne olarak getirir ({ id, ad, slug, ... })
+const bolumleriGetir = () => Bolum.findAll({ order: [["id", "ASC"]], raw: true });
+const dersleriGetir = () => Ders.findAll({ order: [["id", "ASC"]], raw: true });
+
+// Verilen listeden id'si tutan dersi bulur
+const dersBul = (dersler, id) => dersler.find(d => d.id === id);
 
 // Bir bölümün ders ve not sayısını hesaplar
-const bolumOzeti = (bolum) => {
+const bolumOzeti = (bolum, dersler) => {
     const bolumunDersleri = dersler.filter(d => d.bolumId === bolum.id);
     const dersIdleri = bolumunDersleri.map(d => d.id);
     const notSayisi = notlar.filter(n => dersIdleri.includes(n.dersId)).length;
@@ -31,7 +35,9 @@ const yeniDuyurular = () => [...duyurular].sort((a, b) => b.tarih.localeCompare(
 // ===== ANA SAYFA =====
 exports.anasayfa = async (req, res, next) => {
     try {
-        const notListesi = notlar.map(not => ({ ...not, ders: dersBul(not.dersId) }));
+        const bolumler = await bolumleriGetir();
+        const dersler = await dersleriGetir();
+        const notListesi = notlar.map(not => ({ ...not, ders: dersBul(dersler, not.dersId) }));
 
         // Liderler ve sorular artık veritabanından
         const liderler = await Kullanici.findAll({
@@ -42,7 +48,7 @@ exports.anasayfa = async (req, res, next) => {
 
         res.render("index", {
             title: "Ana Sayfa",
-            bolumler: bolumler.map(bolumOzeti),
+            bolumler: bolumler.map(b => bolumOzeti(b, dersler)),
             notlar: notListesi,
             liderler: liderler,
             duyurular: yeniDuyurular().slice(0, 3),   // en yeni 3 duyuru
@@ -54,24 +60,30 @@ exports.anasayfa = async (req, res, next) => {
 };
 
 // ===== BÖLÜMLER LİSTESİ =====
-exports.bolumler = (req, res) => {
-    res.render("bolumler", {
-        title: "Bölümler",
-        bolumler: bolumler.map(bolumOzeti)
-    });
+exports.bolumler = async (req, res, next) => {
+    try {
+        const bolumler = await bolumleriGetir();
+        const dersler = await dersleriGetir();
+        res.render("bolumler", {
+            title: "Bölümler",
+            bolumler: bolumler.map(b => bolumOzeti(b, dersler))
+        });
+    } catch (err) {
+        next(err);
+    }
 };
 
 // ===== BÖLÜM DETAY: /bolum/:slug =====
 exports.bolumDetay = async (req, res, next) => {
     try {
-        const bolum = bolumler.find(b => b.slug === req.params.slug);
+        const bolum = await Bolum.findOne({ where: { slug: req.params.slug }, raw: true });
         if (!bolum) return bulunamadi(res);
+        const dersler = await Ders.findAll({ where: { bolumId: bolum.id }, order: [["id", "ASC"]], raw: true });
 
         // Her sorunun sadece ders numarasını al, derslere göre say
         const soruDersleri = (await Soru.findAll({ attributes: ["dersId"] })).map(s => s.dersId);
 
         const dersListesi = dersler
-            .filter(d => d.bolumId === bolum.id)
             .map(ders => ({
                 ...ders,
                 notSayisi: notlar.filter(n => n.dersId === ders.id).length,
@@ -87,13 +99,13 @@ exports.bolumDetay = async (req, res, next) => {
 // ===== DERS DETAY: /ders/:slug =====
 exports.dersDetay = async (req, res, next) => {
     try {
-        const ders = dersler.find(d => d.slug === req.params.slug);
+        const ders = await Ders.findOne({ where: { slug: req.params.slug }, raw: true });
         if (!ders) return bulunamadi(res);
 
         res.render("ders", {
             title: ders.ad,
             ders: ders,
-            bolum: bolumler.find(b => b.id === ders.bolumId),
+            bolum: await Bolum.findByPk(ders.bolumId, { raw: true }),
             notlar: notlar.filter(n => n.dersId === ders.id),
             sorular: await soruOzetleri({ dersId: ders.id })
         });
@@ -109,8 +121,8 @@ exports.notDetay = async (req, res, next) => {
         if (!not) return bulunamadi(res);
 
         // Breadcrumb için ders ve bölüm
-        const ders = dersBul(not.dersId);
-        const bolum = bolumler.find(b => b.id === ders.bolumId);
+        const ders = await Ders.findByPk(not.dersId, { raw: true });
+        const bolum = ders ? await Bolum.findByPk(ders.bolumId, { raw: true }) : null;
 
         // Yükleyen kişi ve seviyesi (veritabanından)
         const kisi = await Kullanici.findOne({ where: { ad: not.yukleyen }, attributes: ["ad", "puan"] });

@@ -1,5 +1,14 @@
-const { Kullanici, Soru, Cevap } = require("./iliskiler");
-const { kullanicilar, sorular, cevaplar } = require("../data/dummy");
+const { Kullanici, Soru, Cevap, Bolum, Ders } = require("./iliskiler");
+const { kullanicilar, sorular, cevaplar, bolumler, dersler } = require("../data/dummy");
+
+// Bölümler ve dersler (diğer her şey bunlara bağlı olduğu için ilk sırada)
+const bolumVeDersleriEkle = async () => {
+    if ((await Bolum.count()) > 0) return;
+
+    await Bolum.bulkCreate(bolumler.map((b) => ({ id: b.id, ad: b.ad, slug: b.slug })));
+    await Ders.bulkCreate(dersler.map((d) => ({ id: d.id, bolumId: d.bolumId, ad: d.ad, slug: d.slug })));
+    console.log("Örnek bölümler ve dersler eklendi.");
+};
 
 const kullanicilariEkle = async () => {
     if ((await Kullanici.count()) > 0) return;
@@ -54,6 +63,7 @@ const sorulariEkle = async () => {
 };
 
 const baslangicVerisiEkle = async () => {
+    await bolumVeDersleriEkle();
     await kullanicilariEkle();
     await sorulariEkle();
 };

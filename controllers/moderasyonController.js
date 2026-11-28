@@ -1,8 +1,6 @@
-const { Soru, Cevap, Kullanici } = require("../models/iliskiler");
-const { dersler } = require("../data/dummy");
+const { Soru, Cevap, Kullanici, Ders } = require("../models/iliskiler");
 const { puanVer } = require("../helpers/puan");
 
-const dersBul = (id) => dersler.find(d => d.id === id);
 
 // ===== SORU LİSTESİ: GET /admin/sorular =====
 exports.soruListesi = async (req, res, next) => {
@@ -10,7 +8,8 @@ exports.soruListesi = async (req, res, next) => {
         const kayitlar = await Soru.findAll({
             include: [
                 { model: Kullanici, attributes: ["ad"] },
-                { model: Cevap, attributes: ["id"] }
+                { model: Cevap, attributes: ["id"] },
+                { model: Ders, as: "ders", attributes: ["id", "ad", "slug"] }
             ],
             order: [["tarih", "DESC"]]
         });
@@ -22,7 +21,7 @@ exports.soruListesi = async (req, res, next) => {
             tarih: s.tarih,
             dersId: s.dersId,
             soran: s.Kullanici ? s.Kullanici.ad : "",
-            ders: dersBul(s.dersId),
+            ders: s.ders ? s.ders.get({ plain: true }) : null,
             cevapSayisi: s.Cevaps.length
         }));
 
@@ -57,7 +56,7 @@ exports.soruDetay = async (req, res, next) => {
                 dersId: soru.dersId,
                 enIyiCevapId: soru.enIyiCevapId,
                 soran: soru.Kullanici ? soru.Kullanici.ad : "",
-                ders: dersBul(soru.dersId)
+                ders: await Ders.findByPk(soru.dersId, { raw: true })
             },
             cevaplar: cevaplar.map(c => ({
                 id: c.id,

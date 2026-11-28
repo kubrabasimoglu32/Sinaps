@@ -1,6 +1,5 @@
 const bcrypt = require("bcryptjs");
-const Kullanici = require("../models/Kullanici");
-const { bolumler } = require("../data/dummy");
+const { Kullanici, Bolum } = require("../models/iliskiler");
 const { SINIFLAR } = require("../helpers/sinif");
 
 // Kabul edilen e-posta alan adı
@@ -12,15 +11,20 @@ const okulMailiMi = (email) => {
 };
 
 // Kayıt formunu hata mesajı ve girilen bilgilerle yeniden gösterir
-const kayitFormu = (res, hata, eski = {}) => {
-    res.render("auth/kayit", {
-        title: "Kayıt ol",
-        hata: hata,
-        eski: eski,
-        bolumler: bolumler,
-        siniflar: SINIFLAR,
-        okulAlanAdi: OKUL_ALAN_ADI
-    });
+const kayitFormu = async (res, hata, eski = {}) => {
+    try {
+        res.render("auth/kayit", {
+            title: "Kayıt ol",
+            hata: hata,
+            eski: eski,
+            bolumler: await Bolum.findAll({ order: [["ad", "ASC"]], raw: true }),
+            siniflar: SINIFLAR,
+            okulAlanAdi: OKUL_ALAN_ADI
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Sunucuda bir hata oluştu.");
+    }
 };
 
 // GET /kayit
@@ -43,7 +47,7 @@ exports.kayitOl = async (req, res) => {
         if (!okulMailiMi(email)) return kayitFormu(res, `E-posta adresi @${OKUL_ALAN_ADI} ile bitmeli.`, eski);
         if (sifre.length < 6) return kayitFormu(res, "Şifre en az 6 karakter olmalı.", eski);
         if (sifre !== sifreTekrar) return kayitFormu(res, "Şifreler birbiriyle uyuşmuyor.", eski);
-        if (!bolumler.some(b => b.id === bolumId)) return kayitFormu(res, "Geçerli bir bölüm seç.", eski);
+        if (!(await Bolum.findByPk(bolumId))) return kayitFormu(res, "Geçerli bir bölüm seç.", eski);
         if (!SINIFLAR.some(s => s.deger === sinif)) return kayitFormu(res, "Geçerli bir sınıf seç.", eski);
 
         // Aynı ad ya da e-posta var mı?

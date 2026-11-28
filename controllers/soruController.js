@@ -1,5 +1,5 @@
-const { Soru, Cevap, Kullanici } = require("../models/iliskiler");
-const { dersler, notlar } = require("../data/dummy");
+const { Soru, Cevap, Kullanici, Ders } = require("../models/iliskiler");
+const { notlar } = require("../data/dummy");
 const slugUret = require("../helpers/slug");
 const seviyeBul = require("../helpers/seviye");
 const { puanVer } = require("../helpers/puan");
@@ -7,7 +7,8 @@ const { puanVer } = require("../helpers/puan");
 // ===================================================
 // YARDIMCI FONKSİYONLAR
 // ===================================================
-const dersBul = (id) => dersler.find(d => d.id === id);
+// Ders listesini veritabanından düz nesne olarak getirir ({ id, ad, slug, bolumId })
+const dersleriGetir = () => Ders.findAll({ order: [["ad", "ASC"]], raw: true });
 const bugun = () => new Date().toISOString().slice(0, 10);
 const bulunamadi = (res) => res.status(404).render("404", { title: "Sayfa bulunamadı" });
 
@@ -27,7 +28,8 @@ exports.liste = async (req, res, next) => {
         const kayitlar = await Soru.findAll({
             include: [
                 { model: Kullanici, attributes: ["ad"] },
-                { model: Cevap, attributes: ["id"] }
+                { model: Cevap, attributes: ["id"] },
+                { model: Ders, as: "ders", attributes: ["id", "ad", "slug", "bolumId"] }
             ],
             order: [["tarih", "DESC"]]
         });
@@ -41,7 +43,7 @@ exports.liste = async (req, res, next) => {
             dersId: s.dersId,
             enIyiCevapId: s.enIyiCevapId,
             soran: s.Kullanici ? s.Kullanici.ad : "",
-            ders: dersBul(s.dersId),
+            ders: s.ders ? s.ders.get({ plain: true }) : null,
             cevapSayisi: s.Cevaps.length
         }));
 
@@ -80,7 +82,7 @@ exports.detay = async (req, res, next) => {
         const oturum = req.session.kullanici;
         const soranBenim = !!oturum && oturum.id === soru.kullaniciId;
 
-        const ders = dersBul(soru.dersId);
+        const ders = await Ders.findByPk(soru.dersId, { raw: true });
         const dersSoruSayisi = await Soru.count({ where: { dersId: soru.dersId } });
 
         res.render("soru", {
@@ -108,13 +110,17 @@ exports.detay = async (req, res, next) => {
 };
 
 // ===== SORU SOR FORMU: GET /soru-sor =====
-exports.soruSorSayfasi = (req, res) => {
-    res.render("soru-sor", {
-        title: "Soru sor",
-        dersler: dersler,
-        hata: null,
-        eski: { dersSlug: req.query.ders || "" }
-    });
+exports.soruSorSayfasi = async (req, res, next) => {
+    try {
+        res.render("soru-sor", {
+            title: "Soru sor",
+            dersler: await dersleriGetir(),
+            hata: null,
+            eski: { dersSlug: req.query.ders || "" }
+        });
+    } catch (err) {
+        next(err);
+    }
 };
 
 // ===== SORU KAYDET: POST /soru-sor =====
@@ -123,6 +129,7 @@ exports.soruSor = async (req, res, next) => {
         const dersSlug = req.body.ders || "";
         const baslik = (req.body.baslik || "").trim();
         const icerik = (req.body.icerik || "").trim();
+        const dersler = await dersleriGetir();
         const ders = dersler.find(d => d.slug === dersSlug);
 
         if (!ders || !baslik || !icerik) {

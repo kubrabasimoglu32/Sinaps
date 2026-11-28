@@ -1,5 +1,5 @@
-const { Kullanici, Soru, Cevap, PuanHareketi } = require("../models/iliskiler");
-const { bolumler, notlar, bekleyenNotlar } = require("../data/dummy");
+const { Kullanici, Soru, Cevap, PuanHareketi, Bolum } = require("../models/iliskiler");
+const { notlar, bekleyenNotlar } = require("../data/dummy");
 const { seviyeDetay } = require("../helpers/seviye");
 const { sinifAdi } = require("../helpers/sinif");
 
@@ -37,7 +37,7 @@ const profilGoster = async (res, kisi, kendisiMi) => {
         rol: rolAdi[kisi.rol],
         puan: kisi.puan,
         seviye: seviyeDetay(kisi.puan),
-        bolum: bolumler.find(b => b.id === kisi.bolumId),
+        bolum: kisi.bolumId ? await Bolum.findByPk(kisi.bolumId, { raw: true }) : null,
         sinif: sinifAdi(kisi.sinif),
         kayitTarihi: kisi.createdAt,
 

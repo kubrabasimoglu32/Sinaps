@@ -1,8 +1,7 @@
 const bcrypt = require("bcryptjs");
 const fs = require("fs");
 const path = require("path");
-const Kullanici = require("../models/Kullanici");
-const { bolumler } = require("../data/dummy");     // bölüm listesi henüz dummy'de, sonra veritabanına geçecek
+const { Kullanici, Bolum } = require("../models/iliskiler");
 const { SINIFLAR } = require("../helpers/sinif");
 
 const MESAJLAR = {
@@ -43,7 +42,7 @@ exports.sayfa = async (req, res, next) => {
                 sinif: ben.sinif,
                 profilFoto: ben.profilFoto || null
             },
-            bolumler: bolumler,
+            bolumler: await Bolum.findAll({ order: [["ad", "ASC"]], raw: true }),
             siniflar: SINIFLAR,
             mesaj: MESAJLAR[req.query.durum] || null
         });
@@ -58,7 +57,7 @@ exports.bilgiGuncelle = async (req, res, next) => {
         const bolumId = Number(req.body.bolum);
         const sinif = Number(req.body.sinif);
 
-        if (!bolumler.some(b => b.id === bolumId) || !SINIFLAR.some(s => s.deger === sinif)) {
+        if (!(await Bolum.findByPk(bolumId)) || !SINIFLAR.some(s => s.deger === sinif)) {
             return geriDon(res, "bilgiHata");
         }
 
