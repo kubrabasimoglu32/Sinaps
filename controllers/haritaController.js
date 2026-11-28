@@ -1,4 +1,5 @@
-const { bolumler, dersler, notlar, duyurular, sorular } = require("../data/dummy");
+const { bolumler, dersler, notlar, duyurular } = require("../data/dummy");
+const { Soru } = require("../models/iliskiler");
 
 // Sabit sayfalar (xml: false olanlar arama motorlarına bildirilmez)
 // Galeri modülü eklenince buraya da eklenecek
@@ -16,7 +17,8 @@ const siteAdresi = (req) => `${req.protocol}://${req.get("host")}`;
 
 
 // ===== SİTE HARİTASI SAYFASI: /site-haritasi =====
-exports.sayfa = (req, res) => {
+exports.sayfa = async (req, res, next) => {
+    try {
     // Bölüm → ders → not ağacı
     const agac = bolumler.map(bolum => ({
         ...bolum,
@@ -30,13 +32,18 @@ exports.sayfa = (req, res) => {
         sabitSayfalar: sabitSayfalar,
         agac: agac,
         duyurular: duyurular,
-        sorular: sorular
+        sorular: await Soru.findAll({ attributes: ["slug", "baslik"], order: [["tarih", "DESC"]] })
     });
+    } catch (err) {
+        next(err);
+    }
 };
 
 // ===== ARAMA MOTORLARI İÇİN: /sitemap.xml =====
-exports.xml = (req, res) => {
+exports.xml = async (req, res, next) => {
+    try {
     const site = siteAdresi(req);
+    const sorular = await Soru.findAll({ attributes: ["slug", "tarih"] });
 
     // Sitedeki bütün herkese açık adresler
     const adresler = [
@@ -61,6 +68,9 @@ exports.xml = (req, res) => {
         `\n</urlset>`;
 
     res.type("application/xml").send(xml);
+    } catch (err) {
+        next(err);
+    }
 };
 
 // ===== ARAMA MOTORLARINA KURALLAR: /robots.txt =====

@@ -1,7 +1,7 @@
 const { notlar, bekleyenNotlar, dersler, kullanicilar, duyurular } = require("../data/dummy");
 const slugUret = require("../helpers/slug");
 const { istatistikGetir } = require("../middleware/sayac");
-const puanVer = require("../helpers/puan");
+const { puanVer } = require("../helpers/puan");
 
 // ===== YARDIMCILAR =====
 const dersBul = (id) => dersler.find(d => d.id === id);
@@ -36,33 +36,37 @@ exports.notOnaylari = (req, res) => {
 };
 
 // ===== NOTU ONAYLA: POST /admin/notlar/:id/onayla =====
-exports.notOnayla = (req, res) => {
-    const id = Number(req.params.id);
-    const sira = bekleyenNotlar.findIndex(n => n.id === id);
-    if (sira === -1) return geriDon(req, res);
+// ===== NOTU ONAYLA: POST /admin/notlar/:id/onayla =====
+exports.notOnayla = async (req, res, next) => {
+    try {
+        const id = Number(req.params.id);
+        const sira = bekleyenNotlar.findIndex(n => n.id === id);
+        if (sira === -1) return geriDon(req, res);
 
-    // 1) Notu bekleyenlerden çıkar, yayındaki notlara ekle
-    const [not] = bekleyenNotlar.splice(sira, 1);
-    notlar.push(not);
+        const [not] = bekleyenNotlar.splice(sira, 1);
+        notlar.push(not);
 
-    // 2) Ödül: yükleyene +20 puan
-    puanVer(not.yukleyen, 20, `Notun onaylandı: ${not.baslik}`);
-
-    geriDon(req, res);
+        await puanVer(not.yukleyen, 20, `Notun onaylandı: ${not.baslik}`);
+        geriDon(req, res);
+    } catch (err) {
+        next(err);
+    }
 };
 
 // ===== NOTU REDDET: POST /admin/notlar/:id/reddet =====
-exports.notReddet = (req, res) => {
-    const id = Number(req.params.id);
-    const sira = bekleyenNotlar.findIndex(n => n.id === id);
-    if (sira === -1) return geriDon(req, res);
+exports.notReddet = async (req, res, next) => {
+    try {
+        const id = Number(req.params.id);
+        const sira = bekleyenNotlar.findIndex(n => n.id === id);
+        if (sira === -1) return geriDon(req, res);
 
-    const [not] = bekleyenNotlar.splice(sira, 1);
+        const [not] = bekleyenNotlar.splice(sira, 1);
 
-    // Ceza: yükleyenden -5 puan (puan sıfırın altına düşmesin)
-    puanVer(not.yukleyen, -5, `Notun reddedildi: ${not.baslik}`);
-
-    geriDon(req, res);
+        await puanVer(not.yukleyen, -5, `Notun reddedildi: ${not.baslik}`);
+        geriDon(req, res);
+    } catch (err) {
+        next(err);
+    }
 };
 // ===== DUYURU LİSTESİ: /admin/duyurular =====
 exports.duyuruListesi = (req, res) => {

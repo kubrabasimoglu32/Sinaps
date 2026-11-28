@@ -4,7 +4,7 @@ const session = require("express-session");
 const { baglantiTest } = require("./config/database");
 baglantiTest();
 const { sequelize } = require("./config/database");
-require("./models/Kullanici");
+require("./models/iliskiler");
 
 const baslangicVerisiEkle = require("./models/seed");
 

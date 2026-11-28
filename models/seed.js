@@ -1,10 +1,8 @@
-const Kullanici = require("./Kullanici");
-const { kullanicilar } = require("../data/dummy");
+const { Kullanici, Soru, Cevap } = require("./iliskiler");
+const { kullanicilar, sorular, cevaplar } = require("../data/dummy");
 
-// Tablo boşsa örnek kullanıcıları ekler, doluysa bir şey yapmaz
-const baslangicVerisiEkle = async () => {
-    const sayi = await Kullanici.count();
-    if (sayi > 0) return;
+const kullanicilariEkle = async () => {
+    if ((await Kullanici.count()) > 0) return;
 
     await Kullanici.bulkCreate(
         kullanicilar.map((k) => ({
@@ -21,6 +19,43 @@ const baslangicVerisiEkle = async () => {
         }))
     );
     console.log("Örnek kullanıcılar eklendi.");
+};
+
+const sorulariEkle = async () => {
+    if ((await Soru.count()) > 0) return;
+
+    // Kullanıcı adından id'sine geçiş tablosu: { kubra: 1, mehmet: 4, ... }
+    const idler = {};
+    (await Kullanici.findAll()).forEach((k) => { idler[k.ad] = k.id; });
+
+    await Soru.bulkCreate(
+        sorular.map((s) => ({
+            id: s.id,
+            baslik: s.baslik,
+            slug: s.slug,
+            icerik: s.icerik,
+            dersId: s.dersId,
+            tarih: s.tarih,
+            enIyiCevapId: s.enIyiCevapId,
+            kullaniciId: idler[s.soran]
+        }))
+    );
+
+    await Cevap.bulkCreate(
+        cevaplar.map((c) => ({
+            id: c.id,
+            soruId: c.soruId,
+            icerik: c.icerik,
+            tarih: c.tarih,
+            kullaniciId: idler[c.yazan]
+        }))
+    );
+    console.log("Örnek sorular ve cevaplar eklendi.");
+};
+
+const baslangicVerisiEkle = async () => {
+    await kullanicilariEkle();
+    await sorulariEkle();
 };
 
 module.exports = baslangicVerisiEkle;

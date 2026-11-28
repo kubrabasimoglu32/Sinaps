@@ -1,25 +1,23 @@
-const { kullanicilar, puanHareketleri } = require("../data/dummy");
+const { Kullanici, PuanHareketi } = require("../models/iliskiler");
 
-// Kullanıcıya puan ekler (miktar eksi ise düşer) ve hareketi kaydeder.
-// Puan sıfırın altına inmez.
-const puanVer = (kullaniciAdi, miktar, aciklama) => {
-    const kisi = kullanicilar.find(k => k.ad === kullaniciAdi);
+// Kullanıcının puanını değiştirir ve geçmişe kaydeder
+// Puan sıfırın altına düşmez, geçmişe gerçekte değişen miktar yazılır
+const puanVer = async (kullaniciAdi, miktar, aciklama) => {
+    const kisi = await Kullanici.findOne({ where: { ad: kullaniciAdi } });
     if (!kisi) return;
 
-    const onceki = kisi.puan;
-    kisi.puan = Math.max(0, kisi.puan + miktar);
-    const gercekDegisim = kisi.puan - onceki;
+    const eskiPuan = kisi.puan;
+    const yeniPuan = Math.max(0, eskiPuan + miktar);
+    const gercekDegisim = yeniPuan - eskiPuan;
 
-    // Puan gerçekten değiştiyse geçmişe kaydet
-    if (gercekDegisim !== 0) {
-        puanHareketleri.push({
-            id: puanHareketleri.length ? Math.max(...puanHareketleri.map(h => h.id)) + 1 : 1,
-            kullaniciAd: kisi.ad,
-            miktar: gercekDegisim,
-            aciklama: aciklama || "Puan değişikliği",
-            tarih: new Date().toISOString().slice(0, 10)
-        });
-    }
+    kisi.puan = yeniPuan;
+    await kisi.save();
+
+    await PuanHareketi.create({
+        kullaniciId: kisi.id,
+        miktar: gercekDegisim,
+        aciklama: aciklama
+    });
 };
 
-module.exports = puanVer;
+module.exports = { puanVer };

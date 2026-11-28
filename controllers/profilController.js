@@ -1,20 +1,34 @@
-const Kullanici = require("../models/Kullanici");
-const { bolumler, notlar, bekleyenNotlar, sorular, cevaplar, puanHareketleri } = require("../data/dummy");
+const { Kullanici, Soru, Cevap, PuanHareketi } = require("../models/iliskiler");
+const { bolumler, notlar, bekleyenNotlar } = require("../data/dummy");
 const { seviyeDetay } = require("../helpers/seviye");
 const { sinifAdi } = require("../helpers/sinif");
 
 const rolAdi = { admin: "Admin", moderator: "Moderatör", ogrenci: "Öğrenci" };
 
 // ===== Profil sayfasını hazırlayıp gösterir =====
-// Not, soru, cevap ve puan verileri henüz dummy'de; onlar veritabanına geçince burası da değişecek
-const profilGoster = (res, kisi, kendisiMi) => {
+// kendisiMi: sayfaya bakan kişi profilin sahibi mi? (puan geçmişi sadece ona görünür)
+// Sorular, cevaplar ve puan geçmişi veritabanından; notlar henüz dummy'de
+const profilGoster = async (res, kisi, kendisiMi) => {
     const kisininNotlari = notlar.filter(n => n.yukleyen === kisi.ad);
-    const kisininCevaplari = cevaplar.filter(c => c.yazan === kisi.ad);
 
-    const cevapListesi = kisininCevaplari.map(c => {
-        const soru = sorular.find(s => s.id === c.soruId);
-        return { ...c, soru: soru, enIyiMi: !!soru && soru.enIyiCevapId === c.id };
+    const sorular = await Soru.findAll({
+        where: { kullaniciId: kisi.id },
+        order: [["tarih", "DESC"]]
     });
+
+    // Cevaplar, ait oldukları soruyla birlikte
+    const cevaplar = await Cevap.findAll({
+        where: { kullaniciId: kisi.id },
+        include: [{ model: Soru, attributes: ["id", "baslik", "slug", "enIyiCevapId"] }],
+        order: [["tarih", "DESC"]]
+    });
+    const cevapListesi = cevaplar.map(c => ({
+        id: c.id,
+        icerik: c.icerik,
+        tarih: c.tarih,
+        soru: c.Soru,
+        enIyiMi: !!c.Soru && c.Soru.enIyiCevapId === c.id
+    }));
 
     const profil = {
         ad: kisi.ad,
@@ -28,27 +42,38 @@ const profilGoster = (res, kisi, kendisiMi) => {
         kayitTarihi: kisi.createdAt,
 
         notlar: kisininNotlari,
-        sorular: sorular.filter(s => s.soran === kisi.ad),
+        sorular: sorular,
         cevaplar: cevapListesi,
 
         katki: {
             not: kisininNotlari.length,
-            cevap: kisininCevaplari.length,
+            cevap: cevapListesi.length,
             enIyiCevap: cevapListesi.filter(c => c.enIyiMi).length,
             indirme: kisininNotlari.reduce((toplam, n) => toplam + n.indirme, 0)
         }
     };
 
+    // Puan geçmişi sadece profilin sahibine
+    let puanGecmisi = [];
+    if (kendisiMi) {
+        const hareketler = await PuanHareketi.findAll({
+            where: { kullaniciId: kisi.id },
+            order: [["id", "DESC"]],
+            limit: 50
+        });
+        puanGecmisi = hareketler.map(h => ({
+            miktar: h.miktar,
+            aciklama: h.aciklama,
+            tarih: h.createdAt.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })
+        }));
+    }
+
     res.render("profil", {
         title: kendisiMi ? "Profilim" : kisi.ad,
         profil: profil,
         kendisiMi: kendisiMi,
-        puanGecmisi: kendisiMi
-            ? puanHareketleri.filter(h => h.kullaniciAd === kisi.ad).sort((a, b) => b.id - a.id)
-            : [],
-        bekleyenNotlar: kendisiMi
-            ? bekleyenNotlar.filter(n => n.yukleyen === kisi.ad)
-            : []
+        puanGecmisi: puanGecmisi,
+        bekleyenNotlar: kendisiMi ? bekleyenNotlar.filter(n => n.yukleyen === kisi.ad) : []
     });
 };
 
@@ -56,7 +81,7 @@ const profilGoster = (res, kisi, kendisiMi) => {
 exports.benimProfilim = async (req, res, next) => {
     try {
         const kisi = await Kullanici.findByPk(req.session.kullanici.id);
-        profilGoster(res, kisi, true);
+        await profilGoster(res, kisi, true);
     } catch (err) {
         next(err);
     }
@@ -72,7 +97,7 @@ exports.kullaniciProfili = async (req, res, next) => {
         const oturum = req.session.kullanici;
         if (oturum && oturum.id === kisi.id) return res.redirect("/profil");
 
-        profilGoster(res, kisi, false);
+        await profilGoster(res, kisi, false);
     } catch (err) {
         next(err);
     }

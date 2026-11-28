@@ -1,72 +1,114 @@
-const { sorular, cevaplar, dersler } = require("../data/dummy");
-const puanVer = require("../helpers/puan");
+const { Soru, Cevap, Kullanici } = require("../models/iliskiler");
+const { dersler } = require("../data/dummy");
+const { puanVer } = require("../helpers/puan");
 
-// ===================================================
-// YARDIMCI FONKSİYONLAR
-// ===================================================
 const dersBul = (id) => dersler.find(d => d.id === id);
 
-// Listeden şarta uyan bütün elemanları siler (listenin kendisini değiştirir)
-const listedenSil = (liste, sart) => {
-    for (let i = liste.length - 1; i >= 0; i--) {
-        if (sart(liste[i])) liste.splice(i, 1);
-    }
-};
-
-
-// ===================================================
-// SAYFALAR
-// ===================================================
-
 // ===== SORU LİSTESİ: GET /admin/sorular =====
-exports.soruListesi = (req, res) => {
-    const liste = [...sorular]
-        .sort((a, b) => b.tarih.localeCompare(a.tarih))
-        .map(s => ({
-            ...s,
+exports.soruListesi = async (req, res, next) => {
+    try {
+        const kayitlar = await Soru.findAll({
+            include: [
+                { model: Kullanici, attributes: ["ad"] },
+                { model: Cevap, attributes: ["id"] }
+            ],
+            order: [["tarih", "DESC"]]
+        });
+
+        const liste = kayitlar.map(s => ({
+            id: s.id,
+            baslik: s.baslik,
+            slug: s.slug,
+            tarih: s.tarih,
+            dersId: s.dersId,
+            soran: s.Kullanici ? s.Kullanici.ad : "",
             ders: dersBul(s.dersId),
-            cevapSayisi: cevaplar.filter(c => c.soruId === s.id).length
+            cevapSayisi: s.Cevaps.length
         }));
 
-    res.render("admin/sorular", { title: "Sorular", aktif: "sorular", sorular: liste });
+        res.render("admin/sorular", { title: "Sorular", aktif: "sorular", sorular: liste });
+    } catch (err) {
+        next(err);
+    }
 };
 
 // ===== BİR SORUNUN CEVAPLARI: GET /admin/sorular/:id =====
-exports.soruDetay = (req, res) => {
-    const soru = sorular.find(s => s.id === Number(req.params.id));
-    if (!soru) return res.redirect("/admin/sorular");
+exports.soruDetay = async (req, res, next) => {
+    try {
+        const soru = await Soru.findByPk(Number(req.params.id), {
+            include: [{ model: Kullanici, attributes: ["ad"] }]
+        });
+        if (!soru) return res.redirect("/admin/sorular");
 
-    res.render("admin/soru-cevaplar", {
-        title: "Cevaplar",
-        aktif: "sorular",
-        soru: { ...soru, ders: dersBul(soru.dersId) },
-        cevaplar: cevaplar.filter(c => c.soruId === soru.id)
-    });
+        const cevaplar = await Cevap.findAll({
+            where: { soruId: soru.id },
+            include: [{ model: Kullanici, attributes: ["ad"] }],
+            order: [["id", "ASC"]]
+        });
+
+        res.render("admin/soru-cevaplar", {
+            title: "Cevaplar",
+            aktif: "sorular",
+            soru: {
+                id: soru.id,
+                baslik: soru.baslik,
+                slug: soru.slug,
+                tarih: soru.tarih,
+                dersId: soru.dersId,
+                enIyiCevapId: soru.enIyiCevapId,
+                soran: soru.Kullanici ? soru.Kullanici.ad : "",
+                ders: dersBul(soru.dersId)
+            },
+            cevaplar: cevaplar.map(c => ({
+                id: c.id,
+                soruId: c.soruId,
+                yazan: c.Kullanici ? c.Kullanici.ad : "",
+                tarih: c.tarih,
+                icerik: c.icerik
+            }))
+        });
+    } catch (err) {
+        next(err);
+    }
 };
 
 // ===== SORU SİL: POST /admin/sorular/:id/sil =====
-exports.soruSil = (req, res) => {
-    const id = Number(req.params.id);
+exports.soruSil = async (req, res, next) => {
+    try {
+        const id = Number(req.params.id);
 
-    // Önce sorunun bütün cevaplarını, sonra sorunun kendisini sil
-    listedenSil(cevaplar, c => c.soruId === id);
-    listedenSil(sorular, s => s.id === id);
+        // Önce cevaplar, sonra soru silinir
+        await Cevap.destroy({ where: { soruId: id } });
+        await Soru.destroy({ where: { id: id } });
 
-    res.redirect("/admin/sorular");
+        res.redirect("/admin/sorular");
+    } catch (err) {
+        next(err);
+    }
 };
 
 // ===== CEVAP SİL: POST /admin/cevaplar/:id/sil =====
-exports.cevapSil = (req, res) => {
-    const cevap = cevaplar.find(c => c.id === Number(req.params.id));
-    if (!cevap) return res.redirect("/admin/sorular");
+exports.cevapSil = async (req, res, next) => {
+    try {
+        const cevap = await Cevap.findByPk(Number(req.params.id), {
+            include: [{ model: Kullanici, attributes: ["ad"] }]
+        });
+        if (!cevap) return res.redirect("/admin/sorular");
 
-    // Silinen cevap en iyi cevapsa: soru çözülmemiş olur, verilen puan geri alınır
-    const soru = sorular.find(s => s.id === cevap.soruId);
-    if (soru && soru.enIyiCevapId === cevap.id) {
-        soru.enIyiCevapId = null;
-        puanVer(cevap.yazan, -15);
+        // Silinen cevap en iyi cevapsa: soru çözülmemiş olur, verilen 15 puan geri alınır
+        const soru = await Soru.findByPk(cevap.soruId);
+        if (soru && soru.enIyiCevapId === cevap.id) {
+            soru.enIyiCevapId = null;
+            await soru.save();
+            if (cevap.Kullanici) {
+                await puanVer(cevap.Kullanici.ad, -15, "En iyi cevap silindi");
+            }
+        }
+
+        const soruId = cevap.soruId;
+        await cevap.destroy();
+        res.redirect(`/admin/sorular/${soruId}`);
+    } catch (err) {
+        next(err);
     }
-
-    listedenSil(cevaplar, c => c.id === cevap.id);
-    res.redirect(`/admin/sorular/${cevap.soruId}`);
 };
